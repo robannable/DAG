@@ -75,7 +75,7 @@ def sanitize_filename(filename):
     filename = filename.replace(' ', '_')
     return filename
 
-def save_artefact(artefact_content, project_description, date, location):
+def save_artefact(artefact_content, project_description, date, location, user_bios, themes, model_config, temperature):
     """Save the artefact as a markdown file"""
     # Create artefacts directory if it doesn't exist
     os.makedirs('artefacts', exist_ok=True)
@@ -84,6 +84,10 @@ def save_artefact(artefact_content, project_description, date, location):
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     base_filename = f"{timestamp}_{sanitize_filename(project_description[:50])}"
     filename = f"artefacts/{base_filename}.md"
+    
+    # Get model information
+    provider = model_config.get('provider', '')
+    model_name = model_config.get('model', 'unknown')
     
     # Create markdown content with generated-content class wrapper
     markdown_content = f"""<div class="generated-content{' show-think' if st.session_state.show_thinking else ''}">
@@ -99,11 +103,18 @@ def save_artefact(artefact_content, project_description, date, location):
 ## Date/Timeframe
 {date}
 
+## User Personas
+{user_bios}
+
+## Key Themes
+{themes}
+
 ## Generated Artefact
 {artefact_content}
 
 ---
-*Generated on {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}*
+*Generated on {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}*  
+*Model: {provider}/{model_name} (temperature: {temperature})*
 
 </div>"""
     
@@ -141,17 +152,28 @@ def load_model_config():
 
 def get_model_temperature():
     model_config = load_model_config()
-    default_temp = model_config.get("temperature", 0.7)
     provider = model_config.get('provider', '')
+    default_temp = model_config.get("temperature", 0.7)
     
-    # Adjust max temperature based on provider
-    max_temp = 1.99 if provider == 'perplexity' else 2.0
+    # Define temperature ranges per provider
+    temp_ranges = {
+        'anthropic': (0.0, 1.0),
+        'perplexity': (0.0, 1.99),
+        'openai': (0.0, 2.0),
+        'ollama': (0.0, 2.0)
+    }
+    
+    # Get min/max for current provider, default to 0-1 if provider not found
+    min_temp, max_temp = temp_ranges.get(provider, (0.0, 1.0))
+    
+    # Ensure default temperature is within valid range
+    default_temp = min(max(default_temp, min_temp), max_temp)
     
     return st.slider(
         "Model Temperature - Lower values (0) create focused outputs, higher values create more creative, varied outputs",
-        min_value=0.0,
+        min_value=min_temp,
         max_value=max_temp,
-        value=min(default_temp, max_temp),  # Ensure default doesn't exceed max
+        value=default_temp,
         step=0.1,
         label_visibility="visible",
         help="Technical: Temperature controls the randomness in the model's token selection process. Lower values increase the probability of selecting the most likely next token, while higher values make the distribution more uniform across all possible tokens."
@@ -240,8 +262,23 @@ def prepare_request_data(prompt, model_config, temperature=None):
         data = {
             "model": model_config["model"],
             "messages": [{
+                "role": "system",
+                "content": """You are a dramatalurgical expert that creates diegetic artefacts for architectural projects.
+                
+                IMPORTANT: Structure your response in exactly two parts:
+                1. First, a thinking section wrapped in <think> tags that explains your reasoning
+                2. Then, the final artifact output after a clear closing </think> tag
+                
+                Example structure:
+                <think>
+                Your reasoning here...
+                </think>
+                
+                Your final artifact here..."""
+            },
+            {
                 "role": "user", 
-                "content": enhanced_prompt + "\n\nFirst explain your reasoning within <think> tags before creating the final artifact."
+                "content": enhanced_prompt + "\n\nIMPORTANT: Begin with your reasoning in <think> tags, then close the tag with </think> before providing the final artifact."
             }],
             "max_tokens": calculate_max_tokens(project_description, user_bios, themes),
             "temperature": model_config["temperature"],
@@ -482,7 +519,17 @@ if submitted:
             )
             if not st.session_state.current_artefact.startswith("Error"):
                 # Save the artefact to a file
-                filename = save_artefact(st.session_state.current_artefact, project_description, date, location)
+                model_config = load_model_config()  # Get current model config
+                filename = save_artefact(
+                    st.session_state.current_artefact,
+                    project_description,
+                    date,
+                    location,
+                    user_bios,
+                    themes,
+                    model_config,
+                    temperature
+                )
                 st.session_state.current_filename = filename
                 st.success(f"Artefact saved to: {filename}")
 
