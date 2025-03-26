@@ -1,15 +1,12 @@
-# Diegetic Artefact Generator 🏛️
+# Diegetic Artefact Generator 🎭
 
 A specialized AI tool that generates speculative documents and artifacts for architectural projects, helping explore and communicate the social, cultural, and practical implications of spatial interventions.
-
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
 
 ## Quick Start
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/DAG.git
+git clone https://github.com/robannable/DAG.git
 cd diegetic-artefact-generator
 
 # Install dependencies
@@ -90,10 +87,6 @@ Areas for development:
 - Additional export formats
 - Document templates
 - New AI provider integrations
-
-## License
-
-MIT License - See LICENSE file for details.
 
 ## Acknowledgments
 
