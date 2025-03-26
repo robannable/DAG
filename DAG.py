@@ -2,7 +2,7 @@ import streamlit as st
 # Configure the page - this must be the first st command
 st.set_page_config(
     page_title="Diegetic Artefact Generator",
-    page_icon="🏛️",
+    page_icon="🎭",
     layout="wide"
 )
 
@@ -67,6 +67,10 @@ if 'artefacts' not in st.session_state:
     st.session_state.artefacts = []
 if 'show_thinking' not in st.session_state:
     st.session_state.show_thinking = False
+if 'current_provider' not in st.session_state:
+    st.session_state.current_provider = 'anthropic'  # or whatever default you prefer
+if 'form_data' not in st.session_state:
+    st.session_state.form_data = {}
 
 def sanitize_filename(filename):
     """Convert a string to a valid filename"""
@@ -80,9 +84,16 @@ def save_artefact(artefact_content, project_description, date, location, user_bi
     # Create artefacts directory if it doesn't exist
     os.makedirs('artefacts', exist_ok=True)
     
-    # Create a sanitized filename from project description and date
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    base_filename = f"{timestamp}_{sanitize_filename(project_description[:50])}"
+    # Clean up project description:
+    # 1. Replace carriage returns/newlines with spaces
+    # 2. Take only first 30 chars for filename
+    clean_description = ' '.join(project_description.splitlines()).strip()[:30]
+    
+    # Format timestamp more readably: YYMMDD_HHMM
+    timestamp = datetime.now().strftime("%y%m%d_%H%M")
+    
+    # Create a sanitized filename
+    base_filename = f"{timestamp}_{sanitize_filename(clean_description)}"
     filename = f"artefacts/{base_filename}.md"
     
     # Get model information
@@ -92,7 +103,7 @@ def save_artefact(artefact_content, project_description, date, location, user_bi
     # Create markdown content with generated-content class wrapper
     markdown_content = f"""<div class="generated-content{' show-think' if st.session_state.show_thinking else ''}">
 
-# Diegetic Artefact
+# Diegetic Artefact Generation results:
 
 ## Project
 {project_description}
@@ -169,8 +180,8 @@ def get_model_temperature():
     # Ensure default temperature is within valid range
     default_temp = min(max(default_temp, min_temp), max_temp)
     
-    return st.slider(
-        "Model Temperature - Lower values (0) create focused outputs, higher values create more creative, varied outputs",
+    temp_value = st.slider(
+        "Model Temperature",
         min_value=min_temp,
         max_value=max_temp,
         value=default_temp,
@@ -178,6 +189,10 @@ def get_model_temperature():
         label_visibility="visible",
         help="Technical: Temperature controls the randomness in the model's token selection process. Lower values increase the probability of selecting the most likely next token, while higher values make the distribution more uniform across all possible tokens."
     )
+    
+    st.caption("Lower values (0) create focused outputs, higher values create more creative, varied outputs")
+    
+    return temp_value
 
 def calculate_max_tokens(project_description, user_bios, themes):
     # Estimate input complexity based on length and content
@@ -418,7 +433,7 @@ def generate_artefact(project_description, date, user_bios, themes, location, se
         return error_message
 
 # Main interface
-st.title("🏛️ Diegetic Artefact Generator")
+st.title("🎭 Diegetic Artefact Generator")
 st.markdown("""
 This tool helps architects generate diegetic artefacts—speculative objects that exist within the narrative world of an architectural project.""")
 
@@ -430,26 +445,57 @@ with st.sidebar:
     with open('model_config.json', 'r') as f:
         config = json.load(f)
     
-    # Model selection
-    current_provider = st.selectbox(
-        "Choose Model Provider",
-        options=list(config['providers'].keys()),
-        index=list(config['providers'].keys()).index(config['current_provider']),
-        help="Select which AI model to use for generation"
+    # Create formatted options for the dropdown
+    provider_options = {
+        f"{provider.title()} ({config['providers'][provider]['model']})": provider
+        for provider in config['providers'].keys()
+    }
+    
+    def on_model_change():
+        new_provider = provider_options[st.session_state.model_selector]
+        st.session_state.current_provider = new_provider
+        # Update config file
+        config['current_provider'] = new_provider
+        with open('model_config.json', 'w') as f:
+            json.dump(config, f, indent=4)
+    
+    # Model provider selection with formatted display
+    current_display = next(
+        display for display, provider in provider_options.items()
+        if provider == st.session_state.current_provider
     )
     
-    # Update the current provider in the config
-    config['current_provider'] = current_provider
+    selected_display = st.selectbox(
+        "Choose Model Provider",
+        options=list(provider_options.keys()),
+        index=list(provider_options.keys()).index(current_display),
+        key='model_selector',
+        on_change=on_model_change
+    )
+
+    # Show Ollama model input if needed
+    if st.session_state.current_provider == 'ollama':
+        ollama_model = st.text_input(
+            "Ollama Model Name",
+            value=config['providers']['ollama'].get('model', 'llama2'),
+            help="Enter the name of your locally installed Ollama model (e.g., llama2, mistral, codellama)"
+        )
+        config['providers']['ollama']['model'] = ollama_model
+        st.caption("Make sure you have pulled your chosen model using 'ollama pull model_name'")
     
-    # Save the updated config
-    with open('model_config.json', 'w') as f:
-        json.dump(config, f, indent=4)
-    
-    # Add a separator
-    st.markdown("---")
-    
-    # Move temperature slider to sidebar
+    # Temperature slider
     temperature = get_model_temperature()
+    
+    # Add spacer to push description to bottom
+    st.markdown("<br>" * 5, unsafe_allow_html=True)
+    
+    # Add separator and description at the very bottom
+    st.markdown("---")
+    st.caption("""
+    This tool generates speculative documents and artefacts for architectural projects, helping explore social, cultural, and practical implications of spatial interventions.
+    
+    [![GitHub](https://img.shields.io/badge/GitHub-View_Source-blue?logo=GitHub)](https://github.com/robannable/DAG)
+    """)
 
 # Input form
 with st.form("artefact_form"):
@@ -458,39 +504,39 @@ with st.form("artefact_form"):
     with col1:
         project_description = st.text_area(
             "Project Description",
-            placeholder="Describe your architectural project...",
-            height=150
+            placeholder="Project name and brief description?...",
+            height=100  # Reduced from 150
         )
         location = st.text_input(
             "Project Location",
-            placeholder="e.g., London, UK or specific address"
+            placeholder="e.g., Birmingham, UK or specific address"
         )
         date = st.text_input(
             "Date/Timeframe",
             placeholder="e.g., 2025, 2030, or 'Alternative Present'"
         )
+        # Move category selection here, under the date
+        artefact_types = load_artefact_categories()
+        selected_category = st.selectbox(
+            "Choose Artefact Category",
+            options=artefact_types,
+            help="Select the category of diegetic artefact you want to generate"
+        )
     
     with col2:
         user_bios = st.text_area(
             "User Personas",
-            placeholder="Describe the key users or inhabitants of the space...",
+            placeholder="Describe the key users or inhabitants of the space...include names and personalities if you wish.",
             height=150
         )
         themes = st.text_area(
             "Key Themes",
             placeholder="List the main themes, socioeconomic contexts, and political frameworks...",
-            height=150
+            height=160  # Increased to 160 pixels
         )
     
-    # Add category selection dropdown
-    artefact_types = load_artefact_categories()
-    selected_category = st.selectbox(
-        "Choose Artefact Category",
-        options=artefact_types,
-        help="Select the category of diegetic artefact you want to generate"
-    )
-    
     # Center and style the generate button
+    st.markdown("<div style='padding: 10px 0px;'>", unsafe_allow_html=True)  # Add padding above
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
         submitted = st.form_submit_button(
@@ -498,6 +544,7 @@ with st.form("artefact_form"):
             use_container_width=True,
             type="primary"
         )
+    st.markdown("</div>", unsafe_allow_html=True)  # Close the padding div
 
 # Generate and display results
 if submitted:
@@ -565,8 +612,4 @@ if 'current_artefact' in st.session_state and not st.session_state.current_artef
         data=st.session_state.current_artefact,
         file_name=os.path.basename(st.session_state.current_filename),
         mime="text/markdown"
-    )
-
-# Footer
-st.markdown("---")
-st.markdown("Built for exploring novel, prefigurative architectural practice through narrative artefacts") 
+    ) 

@@ -1,5 +1,5 @@
 {
-    "current_provider": "anthropic",
+    "current_provider": "ollama",
     "providers": {
         "perplexity": {
             "provider": "perplexity",
