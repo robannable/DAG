@@ -1,6 +1,6 @@
 # Diegetic Artefact Generator 🎭
 
-A specialized AI tool that generates speculative documents and artifacts for architectural projects, helping explore and communicate the social, cultural, and practical implications of spatial interventions.
+A specialized AI tool that generates speculative documents and artefacts for architectural projects, helping explore and communicate the social, cultural, and practical implications of spatial interventions.
 
 ## Quick Start
 
