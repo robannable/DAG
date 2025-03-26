@@ -1,5 +1,5 @@
 {
-    "current_provider": "anthropic",
+    "current_provider": "perplexity",
     "providers": {
         "perplexity": {
             "provider": "perplexity",
@@ -38,6 +38,17 @@
             "headers": {
                 "Content-Type": "application/json",
                 "anthropic-version": "2023-06-01"
+            }
+        },
+        "ollama": {
+            "provider": "ollama",
+            "model": "llama2",
+            "max_tokens": 1600,
+            "temperature": 0.7,
+            "top_p": 0.9,
+            "api_endpoint": "http://localhost:11434/api/chat",
+            "headers": {
+                "Content-Type": "application/json"
             }
         }
     }

@@ -77,6 +77,9 @@ def sanitize_filename(filename):
 
 def save_artefact(artefact_content, project_description, date, location):
     """Save the artefact as a markdown file"""
+    # Create artefacts directory if it doesn't exist
+    os.makedirs('artefacts', exist_ok=True)
+    
     # Create a sanitized filename from project description and date
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     base_filename = f"{timestamp}_{sanitize_filename(project_description[:50])}"
@@ -136,6 +139,24 @@ def load_model_config():
             }
         }
 
+def get_model_temperature():
+    model_config = load_model_config()
+    default_temp = model_config.get("temperature", 0.7)
+    provider = model_config.get('provider', '')
+    
+    # Adjust max temperature based on provider
+    max_temp = 1.99 if provider == 'perplexity' else 2.0
+    
+    return st.slider(
+        "Model Temperature - Lower values (0) create focused outputs, higher values create more creative, varied outputs",
+        min_value=0.0,
+        max_value=max_temp,
+        value=min(default_temp, max_temp),  # Ensure default doesn't exceed max
+        step=0.1,
+        label_visibility="visible",
+        help="Technical: Temperature controls the randomness in the model's token selection process. Lower values increase the probability of selecting the most likely next token, while higher values make the distribution more uniform across all possible tokens."
+    )
+
 def calculate_max_tokens(project_description, user_bios, themes):
     # Estimate input complexity based on length and content
     input_length = len(project_description) + len(user_bios) + len(themes)
@@ -147,8 +168,12 @@ def calculate_max_tokens(project_description, user_bios, themes):
         # Simpler project can have slightly more detailed output
         return 1600
 
-def prepare_request_data(prompt, model_config):
+def prepare_request_data(prompt, model_config, temperature=None):
     """Prepare the request data based on the provider's requirements"""
+    if temperature is not None:
+        model_config = model_config.copy()  # Create a copy to avoid modifying the original
+        model_config["temperature"] = temperature
+    
     provider = model_config.get('provider', '')
     
     # Calculate buffer tokens for completion
@@ -180,6 +205,36 @@ def prepare_request_data(prompt, model_config):
                     "content": enhanced_prompt + "\n\nIMPORTANT: First explain your reasoning within <think> tags before creating the final artifact. This thinking will help me understand your creative process."
                 }
             ]
+        }
+    elif provider == 'ollama':
+        # Ollama uses a simpler format with a system prompt and messages
+        system_prompt = """You are a dramatalurgical expert that creates diegetic artefacts for architectural projects.
+        
+        IMPORTANT: In your response, first share your reasoning process within <think> tags. Use this format:
+        <think>
+        Here I analyze what would be most effective for this project...
+        </think>
+        
+        Then provide your final output after the thinking section. The <think> section won't be visible to the end user unless they choose to see it."""
+        
+        return {
+            "model": model_config["model"],
+            "messages": [
+                {
+                    "role": "system",
+                    "content": system_prompt
+                },
+                {
+                    "role": "user",
+                    "content": enhanced_prompt + "\n\nFirst explain your reasoning within <think> tags before creating the final artifact."
+                }
+            ],
+            "stream": False,
+            "options": {
+                "temperature": model_config["temperature"],
+                "top_p": model_config.get("top_p", 0.9),
+                "num_predict": model_config["max_tokens"]
+            }
         }
     else:  # Default to OpenAI/Perplexity format
         data = {
@@ -222,6 +277,14 @@ def extract_response(response, model_config):
             logging.error(f"Error extracting Anthropic response: {str(e)}")
             logging.debug(f"Response content: {response_json}")
             return f"Error parsing response: {str(e)}"
+    elif provider == 'ollama':
+        # Ollama response structure
+        try:
+            return response_json['message']['content']
+        except (KeyError, IndexError) as e:
+            logging.error(f"Error extracting Ollama response: {str(e)}")
+            logging.debug(f"Response content: {response_json}")
+            return f"Error parsing response: {str(e)}"
     else:  # Default to OpenAI/Perplexity format
         try:
             return response_json['choices'][0]['message']['content']
@@ -230,27 +293,27 @@ def extract_response(response, model_config):
             logging.debug(f"Response content: {response_json}")
             return f"Error parsing response: {str(e)}"
 
-def generate_artefact(project_description, date, user_bios, themes, location, selected_type):
+def generate_artefact(project_description, date, user_bios, themes, location, selected_type, temperature=None):
     """Generate a diegetic artefact using the configured API provider"""
     # Load model configuration
     model_config = load_model_config()
     
-    # Get API key
-    api_key = os.getenv(model_config['api_key_env'])
-    if not api_key:
-        return f"Error: {model_config['api_key_env']} not found in environment variables"
+    # Get API key if required
+    provider = model_config.get('provider', '')
+    api_key = None
+    if provider != 'ollama':  # Ollama doesn't require an API key
+        api_key = os.getenv(model_config['api_key_env'])
+        if not api_key:
+            return f"Error: {model_config['api_key_env']} not found in environment variables"
 
     # Prepare headers
     headers = model_config['headers'].copy()
     
     # Handle provider-specific authorization formats
-    provider = model_config.get('provider', '')
     if provider == 'anthropic':
         # Anthropic uses x-api-key instead of Authorization: Bearer
         headers["x-api-key"] = api_key
-        # Log the headers being used (without the actual key)
-        logging.debug(f"Using headers for {provider}: {list(headers.keys())}")
-    else:
+    elif provider != 'ollama':  # Ollama doesn't require authorization
         # Default Bearer format for other providers
         headers["Authorization"] = f"Bearer {api_key}"
     
@@ -293,7 +356,7 @@ def generate_artefact(project_description, date, user_bios, themes, location, se
     Begin your response:"""
 
     # Prepare request data based on provider
-    data = prepare_request_data(prompt, model_config)
+    data = prepare_request_data(prompt, model_config, temperature)
     
     # Log request information (without sensitive data)
     logging.debug(f"Sending request to: {model_config['api_endpoint']}")
@@ -370,7 +433,17 @@ with st.form("artefact_form"):
         help="Select the category of diegetic artefact you want to generate"
     )
     
-    submitted = st.form_submit_button("Generate Artefact")
+    # Move temperature slider here, after category selection
+    temperature = get_model_temperature()
+    
+    # Center and style the generate button
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        submitted = st.form_submit_button(
+            "Generate Artefact",
+            use_container_width=True,
+            type="primary"
+        )
 
 # Generate and display results
 if submitted:
@@ -378,11 +451,18 @@ if submitted:
         st.warning("Please fill in all fields before generating an artefact.")
     else:
         with st.spinner("Generating your diegetic artefact..."):
-            # Use the selected category directly
             selected_type = {"category": selected_category, "items": [selected_category]}
             
-            # Store the generated artefact in session state
-            st.session_state.current_artefact = generate_artefact(project_description, date, user_bios, themes, location, selected_type)
+            # Use the temperature value from outside the form
+            st.session_state.current_artefact = generate_artefact(
+                project_description,
+                date,
+                user_bios,
+                themes,
+                location,
+                selected_type,
+                temperature=temperature
+            )
             if not st.session_state.current_artefact.startswith("Error"):
                 # Save the artefact to a file
                 filename = save_artefact(st.session_state.current_artefact, project_description, date, location)

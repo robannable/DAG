@@ -39,6 +39,7 @@ Diegetic artefacts are objects or documents that exist within a narrative world.
   - Perplexity AI
   - OpenAI
   - Anthropic
+  - Ollama (local inference)
   - Easily extensible for additional providers
 - **Configurable Model Settings**: Customize model parameters through `model_config.json`:
   - Temperature
@@ -46,6 +47,7 @@ Diegetic artefacts are objects or documents that exist within a narrative world.
   - Top P
   - Frequency penalty
   - Presence penalty
+  - Provider-specific options
 - **Multiple Document Types**: Supports various categories including:
   - Personal (diaries, photos, notes)
   - Community (bulletin boards, meeting minutes)
@@ -75,7 +77,9 @@ Diegetic artefacts are objects or documents that exist within a narrative world.
 The tool uses three config files:
 - `artefact_categories.json`: Document types and categories
 - `prompt_instructions.json`: Generation parameters
-- `model_config.json`: AI model settings and provider configurations
+- `model_config.json`: AI model settings and provider configurations, including:
+  - Cloud providers (OpenAI, Anthropic, Perplexity)
+  - Local inference through Ollama
 
 ## Contributing
 
@@ -91,12 +95,6 @@ Areas for development:
 
 MIT License - See LICENSE file for details.
 
-## Citation
+## Acknowledgments
 
-```bibtex
-@software{diegetic_artefact_generator_2024,
-  title = {Diegetic Artefact Generator},
-  year = {2024},
-  url = {https://github.com/yourusername/diegetic-artefact-generator}
-}
-``` 
+Special thanks to Justin Pickard for his role as agitator, critical friend and prompt expert.
