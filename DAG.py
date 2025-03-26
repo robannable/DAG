@@ -249,16 +249,7 @@ def prepare_request_data(prompt, model_config, temperature=None):
             "presence_penalty": model_config.get("presence_penalty", 0.1)
         }
         
-        # Handle provider-specific authorization formats
-        api_key = os.getenv(model_config['api_key_env'])
-        if api_key:
-            if provider == 'anthropic':
-                # Anthropic uses x-api-key instead of Authorization: Bearer
-                data["x-api-key"] = api_key
-            else:
-                # Default Bearer format for other providers
-                data["Authorization"] = f"Bearer {api_key}"
-        
+        # Remove the authorization from data - it should only be in headers
         return data
 
 def extract_response(response, model_config):
@@ -394,6 +385,35 @@ st.title("🏛️ Diegetic Artefact Generator")
 st.markdown("""
 This tool helps architects generate diegetic artefacts—speculative objects that exist within the narrative world of an architectural project.""")
 
+# Sidebar controls
+with st.sidebar:
+    st.header("Model Settings")
+    
+    # Load model configurations
+    with open('model_config.json', 'r') as f:
+        config = json.load(f)
+    
+    # Model selection
+    current_provider = st.selectbox(
+        "Choose Model Provider",
+        options=list(config['providers'].keys()),
+        index=list(config['providers'].keys()).index(config['current_provider']),
+        help="Select which AI model to use for generation"
+    )
+    
+    # Update the current provider in the config
+    config['current_provider'] = current_provider
+    
+    # Save the updated config
+    with open('model_config.json', 'w') as f:
+        json.dump(config, f, indent=4)
+    
+    # Add a separator
+    st.markdown("---")
+    
+    # Move temperature slider to sidebar
+    temperature = get_model_temperature()
+
 # Input form
 with st.form("artefact_form"):
     col1, col2 = st.columns(2)
@@ -432,9 +452,6 @@ with st.form("artefact_form"):
         options=artefact_types,
         help="Select the category of diegetic artefact you want to generate"
     )
-    
-    # Move temperature slider here, after category selection
-    temperature = get_model_temperature()
     
     # Center and style the generate button
     col1, col2, col3 = st.columns([1, 2, 1])

@@ -1,5 +1,5 @@
 {
-    "current_provider": "perplexity",
+    "current_provider": "openai",
     "providers": {
         "perplexity": {
             "provider": "perplexity",
@@ -52,4 +52,4 @@
             }
         }
     }
-} 
+}
