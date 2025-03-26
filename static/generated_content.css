@@ -1,0 +1,104 @@
+/* Generated content wrapper */
+.generated-content {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin: 20px 0;
+    padding: 30px;
+}
+
+/* Typography within generated content */
+.generated-content h1 {
+    color: #1e1e1e;
+    font-size: 2em;
+    margin-bottom: 0.5em;
+    font-weight: 600;
+}
+
+.generated-content h2 {
+    color: #2c3e50;
+    font-size: 1.5em;
+    margin: 1em 0 0.5em;
+    font-weight: 500;
+}
+
+.generated-content h3 {
+    color: #34495e;
+    font-size: 1.25em;
+    margin: 1em 0 0.5em;
+    font-weight: 500;
+}
+
+.generated-content p {
+    color: #2c3e50;
+    line-height: 1.6;
+    margin-bottom: 1em;
+}
+
+/* Lists within generated content */
+.generated-content ul,
+.generated-content ol {
+    margin: 1em 0;
+    padding-left: 1.5em;
+    color: #2c3e50;
+}
+
+.generated-content li {
+    margin-bottom: 0.5em;
+    line-height: 1.6;
+}
+
+/* Blockquotes within generated content */
+.generated-content blockquote {
+    border-left: 4px solid #3498db;
+    margin: 1.5em 0;
+    padding: 1em;
+    background-color: #f8f9fa;
+    color: #34495e;
+    font-style: italic;
+}
+
+/* Code blocks within generated content */
+.generated-content code {
+    background-color: #f8f9fa;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-family: 'Courier New', Courier, monospace;
+    color: #e83e8c;
+    font-size: 0.9em;
+}
+
+.generated-content pre {
+    background-color: #f8f9fa;
+    padding: 1em;
+    border-radius: 5px;
+    overflow-x: auto;
+    border: 1px solid #e0e0e0;
+    margin: 1em 0;
+}
+
+/* Horizontal rules */
+.generated-content hr {
+    border: 0;
+    height: 1px;
+    background-color: #e0e0e0;
+    margin: 2em 0;
+}
+
+/* Think blocks within generated content */
+.generated-content .think-block {
+    color: #666;
+    font-size: 0.95em;
+    font-style: italic;
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-left: 3px solid #4CAF50;
+    margin: 15px 0;
+    border-radius: 4px;
+    display: none;
+}
+
+/* Show think blocks when parent has show-think class */
+.generated-content.show-think .think-block {
+    display: block;
+} 

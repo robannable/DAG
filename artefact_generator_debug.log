@@ -1,0 +1,765 @@
+2025-03-24 20:55:11,040 - INFO - Starting artefact type selection process
+2025-03-24 20:55:11,041 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 20:55:11,051 - DEBUG - Generated prompt: You are a dramatalurgical expert that selects the most appropriate diegetic artefact type for architectural projects.
+    Your task is to analyze the project information and select ONE artefact type from the provided list.
+
+    Project Information:
+    Description: The Beer, Pie and Book Club
+    User Personas: Rob, architect
+Mike, engineer
+Chris, landscaper
+    Key Themes: Geopolitics, music interests, book clubs, friendship
+
+    Available Artefact Types (select exactly one):
+    [
+  "Resident diaries or journals",
+  "Family photo albums",
+  "Handwritten notes between residents",
+  "Medical records",
+  "Personal inventories",
+  "Community bulletin board postings",
+  "Meeting minutes from tenant associations",
+  "Conflict resolution protocols",
+  "Oral histories transcripts",
+  "Recipe collections",
+  "Adaptive reuse applications",
+  "Archaeological site reports",
+  "Growth/decay monitoring logs",
+  "Seasonal usage schedules",
+  "Generational transition plans",
+  "Resource sharing agreements",
+  "Alternative currency systems",
+  "Energy production and consumption logs",
+  "Repair economy invoices",
+  "Harvest records",
+  "API documentation for building systems",
+  "Social media archives",
+  "Sensor data visualizations",
+  "Digital twin update logs",
+  "Access permission structures",
+  "Alternative building codes",
+  "Architectural fiction",
+  "Counterfactual histories",
+  "Protest ephemera",
+  "Ritual instructions",
+  "Multispecies cohabitation agreements",
+  "Soil health reports",
+  "Migration path maps",
+  "Weather response protocols",
+  "Microbiome surveys",
+  "User manuals for buildings",
+  "Fictional newspaper articles",
+  "Catalogs from the future",
+  "Institutional policy documents",
+  "Maintenance guides",
+  "Public notices or announcements"
+]
+
+    Instructions:
+    1. Carefully analyze the project information and themes
+    2. Select the SINGLE most appropriate artefact type that best serves this project's narrative
+    3. Return ONLY the artefact type name, nothing else
+    4. The artefact type must match one of the available options exactly
+2025-03-24 20:55:11,051 - INFO - Sending request to Perplexity API
+2025-03-24 20:55:11,053 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 20:55:14,819 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 20:55:14,820 - INFO - Received response from API: <think>
+Okay, let's see. The project is called The Beer, Pie and Book Club. The user personas are Rob (architect), Mike (engineer), and Chris (landscaper). Key themes include geopolitics, music interests, book clubs, and friendship. I need to pick one artefact from the list that best fits these themes.
+
+First, the main elements here are the club aspect—book club, friends getting together. The personas are professionals in different fields, so
+2025-03-24 20:55:14,820 - DEBUG - Cleaned selected type: <think>
+Okay, lets see. The project is called The Beer, Pie and Book Club. The user personas are Rob (architect), Mike (engineer), and Chris (landscaper). Key themes include geopolitics, music interests, book clubs, and friendship. I need to pick one artefact from the list that best fits these themes.
+
+First, the main elements here are the club aspect—book club, friends getting together. The personas are professionals in different fields, so
+2025-03-24 20:55:14,820 - WARNING - No match found for selected type: <think>
+Okay, lets see. The project is called The Beer, Pie and Book Club. The user personas are Rob (architect), Mike (engineer), and Chris (landscaper). Key themes include geopolitics, music interests, book clubs, and friendship. I need to pick one artefact from the list that best fits these themes.
+
+First, the main elements here are the club aspect—book club, friends getting together. The personas are professionals in different fields, so
+2025-03-24 20:55:14,820 - DEBUG - Attempting retry with prompt: You must select EXACTLY one of these artefact types:
+        [
+  "Resident diaries or journals",
+  "Family photo albums",
+  "Handwritten notes between residents",
+  "Medical records",
+  "Personal inventories",
+  "Community bulletin board postings",
+  "Meeting minutes from tenant associations",
+  "Conflict resolution protocols",
+  "Oral histories transcripts",
+  "Recipe collections",
+  "Adaptive reuse applications",
+  "Archaeological site reports",
+  "Growth/decay monitoring logs",
+  "Seasonal usage schedules",
+  "Generational transition plans",
+  "Resource sharing agreements",
+  "Alternative currency systems",
+  "Energy production and consumption logs",
+  "Repair economy invoices",
+  "Harvest records",
+  "API documentation for building systems",
+  "Social media archives",
+  "Sensor data visualizations",
+  "Digital twin update logs",
+  "Access permission structures",
+  "Alternative building codes",
+  "Architectural fiction",
+  "Counterfactual histories",
+  "Protest ephemera",
+  "Ritual instructions",
+  "Multispecies cohabitation agreements",
+  "Soil health reports",
+  "Migration path maps",
+  "Weather response protocols",
+  "Microbiome surveys",
+  "User manuals for buildings",
+  "Fictional newspaper articles",
+  "Catalogs from the future",
+  "Institutional policy documents",
+  "Maintenance guides",
+  "Public notices or announcements"
+]
+        
+        Your previous response '<think>
+Okay, lets see. The project is called The Beer, Pie and Book Club. The user personas are Rob (architect), Mike (engineer), and Chris (landscaper). Key themes include geopolitics, music interests, book clubs, and friendship. I need to pick one artefact from the list that best fits these themes.
+
+First, the main elements here are the club aspect—book club, friends getting together. The personas are professionals in different fields, so' was not valid.
+        Return ONLY the artefact type name, nothing else.
+2025-03-24 20:55:14,822 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 20:55:17,137 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 20:55:17,139 - INFO - Retry response received: <think>
+Okay, so I need to pick exactly one artifact type from the given list that best fits the project called The Beer, Pie and Book Club with personas Rob (architect), Mike (engineer), and Chris (landscaper). The key themes are geopolitics, music interests, book clubs, and friendship. Let me go through the options again.
+
+Resident diaries or journals: Maybe, but its more personal. Family photo albums: Too family-oriented. Handwritten
+2025-03-24 20:55:17,140 - ERROR - No valid match found after retry
+2025-03-24 21:00:21,308 - INFO - Starting artefact type selection process
+2025-03-24 21:00:21,309 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 21:00:21,309 - DEBUG - Generated prompt: Select the most appropriate artefact type for this project:
+
+Project: The Beer, Pie and Book Club
+Users: Rob, architect
+Mike, engineer
+Chris, landscaper
+Themes: Geopolitics, music interests, book clubs, friendship
+
+Available types (return ONLY the type name):
+[
+  "Resident diaries or journals",
+  "Family photo albums",
+  "Handwritten notes between residents",
+  "Medical records",
+  "Personal inventories",
+  "Community bulletin board postings",
+  "Meeting minutes from tenant associations",
+  "Conflict resolution protocols",
+  "Oral histories transcripts",
+  "Recipe collections",
+  "Adaptive reuse applications",
+  "Archaeological site reports",
+  "Growth/decay monitoring logs",
+  "Seasonal usage schedules",
+  "Generational transition plans",
+  "Resource sharing agreements",
+  "Alternative currency systems",
+  "Energy production and consumption logs",
+  "Repair economy invoices",
+  "Harvest records",
+  "API documentation for building systems",
+  "Social media archives",
+  "Sensor data visualizations",
+  "Digital twin update logs",
+  "Access permission structures",
+  "Alternative building codes",
+  "Architectural fiction",
+  "Counterfactual histories",
+  "Protest ephemera",
+  "Ritual instructions",
+  "Multispecies cohabitation agreements",
+  "Soil health reports",
+  "Migration path maps",
+  "Weather response protocols",
+  "Microbiome surveys",
+  "User manuals for buildings",
+  "Fictional newspaper articles",
+  "Catalogs from the future",
+  "Institutional policy documents",
+  "Maintenance guides",
+  "Public notices or announcements"
+]
+
+Remember: Return ONLY the type name, no explanation or thinking process.
+2025-03-24 21:00:21,309 - INFO - Sending request to Perplexity API
+2025-03-24 21:00:21,311 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 21:00:23,385 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 21:00:23,386 - INFO - Received response from API: <think>
+Okay, let's see. The project is called The Beer, Pie and Book Club. The users are Rob, Mike, and Chris, who are an architect, engineer, and landscaper. The themes include geopolitics, music interests,
+2025-03-24 21:00:23,386 - DEBUG - Cleaned selected type: <think>
+Okay, lets see. The project is called The Beer, Pie and Book Club. The users are Rob, Mike, and Chris, who are an architect, engineer, and landscaper. The themes include geopolitics, music interests,
+2025-03-24 21:00:23,386 - WARNING - No match found for selected type: <think>
+Okay, lets see. The project is called The Beer, Pie and Book Club. The users are Rob, Mike, and Chris, who are an architect, engineer, and landscaper. The themes include geopolitics, music interests,
+2025-03-24 21:00:23,386 - DEBUG - Attempting retry with prompt: Return EXACTLY one of these types (no explanation):
+[
+  "Resident diaries or journals",
+  "Family photo albums",
+  "Handwritten notes between residents",
+  "Medical records",
+  "Personal inventories",
+  "Community bulletin board postings",
+  "Meeting minutes from tenant associations",
+  "Conflict resolution protocols",
+  "Oral histories transcripts",
+  "Recipe collections",
+  "Adaptive reuse applications",
+  "Archaeological site reports",
+  "Growth/decay monitoring logs",
+  "Seasonal usage schedules",
+  "Generational transition plans",
+  "Resource sharing agreements",
+  "Alternative currency systems",
+  "Energy production and consumption logs",
+  "Repair economy invoices",
+  "Harvest records",
+  "API documentation for building systems",
+  "Social media archives",
+  "Sensor data visualizations",
+  "Digital twin update logs",
+  "Access permission structures",
+  "Alternative building codes",
+  "Architectural fiction",
+  "Counterfactual histories",
+  "Protest ephemera",
+  "Ritual instructions",
+  "Multispecies cohabitation agreements",
+  "Soil health reports",
+  "Migration path maps",
+  "Weather response protocols",
+  "Microbiome surveys",
+  "User manuals for buildings",
+  "Fictional newspaper articles",
+  "Catalogs from the future",
+  "Institutional policy documents",
+  "Maintenance guides",
+  "Public notices or announcements"
+]
+
+Previous invalid response: '<think>
+Okay, lets see. The project is called The Beer, Pie and Book Club. The users are Rob, Mike, and Chris, who are an architect, engineer, and landscaper. The themes include geopolitics, music interests,'
+2025-03-24 21:00:23,388 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 21:00:25,482 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 21:00:25,484 - INFO - Retry response received: <think>
+Alright, let me try to figure this out. The user wants me to return exactly one item from the provided list based on the project description. The project is called The Beer, Pie and Book Club with members Rob (architect
+2025-03-24 21:00:25,485 - ERROR - No valid match found after retry
+2025-03-24 21:07:18,212 - INFO - Starting artefact type selection process
+2025-03-24 21:07:18,212 - DEBUG - Generated prompt: You are a dramatalurgical expert that selects the most appropriate diegetic artefact type for architectural projects.
+    Your task is to analyze the project information and select ONE artefact type from the provided list.
+
+    Project Information:
+    Description: The Beer, Pie and Book Club
+    User Personas: Rob, architect
+Mike, engineer
+Chris, landscaper
+    Key Themes: Geopolitics, music interests, book clubs, friendship
+
+    Available Artefact Types (select exactly one):
+    [
+  "A user manual for the building",
+  "A fictional newspaper article",
+  "A catalog from the future",
+  "An institutional policy document",
+  "A maintenance guide",
+  "A public notice or announcement"
+]
+
+    Instructions:
+    1. Carefully analyze the project information and themes
+    2. Select the SINGLE most appropriate artefact type that best serves this project's narrative
+    3. Return ONLY the artefact type name, nothing else
+    4. The artefact type must match one of the available options exactly
+2025-03-24 21:07:18,212 - INFO - Sending request to Perplexity API
+2025-03-24 21:07:18,214 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 21:07:18,244 - ERROR - Exception in select_artefact_type: HTTPSConnectionPool(host='api.perplexity.ai', port=443): Max retries exceeded with url: /chat/completions (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001F25491B350>: Failed to resolve 'api.perplexity.ai' ([Errno 11001] getaddrinfo failed)"))
+2025-03-24 21:07:22,773 - INFO - Starting artefact type selection process
+2025-03-24 21:07:22,773 - DEBUG - Generated prompt: You are a dramatalurgical expert that selects the most appropriate diegetic artefact type for architectural projects.
+    Your task is to analyze the project information and select ONE artefact type from the provided list.
+
+    Project Information:
+    Description: The Beer, Pie and Book Club
+    User Personas: Rob, architect
+Mike, engineer
+Chris, landscaper
+    Key Themes: Geopolitics, music interests, book clubs, friendship
+
+    Available Artefact Types (select exactly one):
+    [
+  "A user manual for the building",
+  "A fictional newspaper article",
+  "A catalog from the future",
+  "An institutional policy document",
+  "A maintenance guide",
+  "A public notice or announcement"
+]
+
+    Instructions:
+    1. Carefully analyze the project information and themes
+    2. Select the SINGLE most appropriate artefact type that best serves this project's narrative
+    3. Return ONLY the artefact type name, nothing else
+    4. The artefact type must match one of the available options exactly
+2025-03-24 21:07:22,773 - INFO - Sending request to Perplexity API
+2025-03-24 21:07:22,775 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 21:07:25,233 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 21:07:25,233 - INFO - Received response from API: <think>
+Okay, let's see. The project is called The Beer, Pie and Book Club. The user personas are Rob (architect), Mike (engineer), and Chris (landscaper). Key themes include geopolitics, music interests, book clubs, and friendship.
+
+I need to pick one artefact type from the list provided. The options are a user manual, fictional newspaper article, catalog from the future, institutional policy document, maintenance guide, or public notice.
+
+First, the
+2025-03-24 21:07:25,233 - DEBUG - Cleaned selected type: <think>
+Okay, lets see. The project is called The Beer, Pie and Book Club. The user personas are Rob (architect), Mike (engineer), and Chris (landscaper). Key themes include geopolitics, music interests, book clubs, and friendship.
+
+I need to pick one artefact type from the list provided. The options are a user manual, fictional newspaper article, catalog from the future, institutional policy document, maintenance guide, or public notice.
+
+First, the
+2025-03-24 21:07:25,234 - WARNING - No match found for selected type: <think>
+Okay, lets see. The project is called The Beer, Pie and Book Club. The user personas are Rob (architect), Mike (engineer), and Chris (landscaper). Key themes include geopolitics, music interests, book clubs, and friendship.
+
+I need to pick one artefact type from the list provided. The options are a user manual, fictional newspaper article, catalog from the future, institutional policy document, maintenance guide, or public notice.
+
+First, the
+2025-03-24 21:07:25,234 - DEBUG - Attempting retry with prompt: You must select EXACTLY one of these artefact types:
+        [
+  "A user manual for the building",
+  "A fictional newspaper article",
+  "A catalog from the future",
+  "An institutional policy document",
+  "A maintenance guide",
+  "A public notice or announcement"
+]
+        
+        Your previous response '<think>
+Okay, lets see. The project is called The Beer, Pie and Book Club. The user personas are Rob (architect), Mike (engineer), and Chris (landscaper). Key themes include geopolitics, music interests, book clubs, and friendship.
+
+I need to pick one artefact type from the list provided. The options are a user manual, fictional newspaper article, catalog from the future, institutional policy document, maintenance guide, or public notice.
+
+First, the' was not valid.
+        Return ONLY the artefact type name, nothing else.
+2025-03-24 21:07:25,235 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 21:07:27,494 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 21:07:27,495 - INFO - Retry response received: <think>
+Alright, let me try to figure this out. The user wants me to select exactly one artefact type from the given list. The previous response started discussing the project and personas but didnt actually choose an artefact. The options are: user manual, fictional newspaper article, catalog from the future, institutional policy document, maintenance guide, or public notice.
+
+The project involves a club with members Rob, Mike, and Chris, focusing on geopolitics, music, book clubs, and friendship
+2025-03-24 21:07:27,495 - ERROR - No valid match found after retry
+2025-03-24 21:14:15,819 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 21:14:15,819 - INFO - Randomly selected artefact type: Soil health reports
+2025-03-24 21:14:15,822 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 21:14:31,819 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 21:15:59,845 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 21:15:59,846 - INFO - Randomly selected artefact type: Handwritten notes between residents
+2025-03-24 21:15:59,850 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 21:16:17,589 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 21:20:56,119 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 21:20:56,120 - INFO - Randomly selected artefact type: Protest ephemera
+2025-03-24 21:20:56,122 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 21:21:22,687 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 21:23:03,880 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 21:23:03,881 - INFO - Randomly selected artefact type: Handwritten notes between residents
+2025-03-24 21:23:03,885 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 21:23:26,884 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 21:25:45,121 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 21:25:45,121 - INFO - Randomly selected artefact type: Resident diaries or journals
+2025-03-24 21:25:45,124 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 21:26:08,203 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 21:28:22,064 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 21:28:22,065 - INFO - Randomly selected artefact type: Resource sharing agreements
+2025-03-24 21:28:22,068 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 21:28:42,444 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 21:31:04,828 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 21:31:04,829 - INFO - Randomly selected artefact type: Microbiome surveys
+2025-03-24 21:31:04,832 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 21:31:28,664 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 21:32:04,170 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 21:32:04,171 - INFO - Randomly selected artefact type: Resource sharing agreements
+2025-03-24 21:32:04,173 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 21:32:24,028 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 21:38:55,608 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 21:38:55,609 - INFO - Randomly selected artefact type: Adaptive reuse applications
+2025-03-24 21:38:55,611 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 21:39:24,513 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 21:44:55,606 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 21:44:55,607 - INFO - Randomly selected artefact type: Conflict resolution protocols
+2025-03-24 21:44:55,610 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 21:45:24,106 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 21:48:52,832 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 21:48:52,832 - INFO - Randomly selected artefact type: Oral histories transcripts
+2025-03-24 21:48:52,835 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 21:49:21,608 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 21:52:09,635 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 21:52:09,636 - INFO - Randomly selected artefact type: Maintenance guides
+2025-03-24 21:52:09,638 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 21:52:41,892 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 21:55:10,697 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 21:55:10,697 - INFO - Randomly selected artefact type: Counterfactual histories
+2025-03-24 21:55:10,700 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 21:55:39,158 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 21:56:03,111 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 21:56:03,112 - INFO - Randomly selected artefact type: Catalogs from the future
+2025-03-24 21:56:03,114 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 21:56:09,222 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 21:56:29,010 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 21:56:29,010 - INFO - Randomly selected artefact type: Conflict resolution protocols
+2025-03-24 21:56:29,013 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 21:56:58,127 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 21:58:58,125 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 21:58:58,126 - INFO - Randomly selected artefact type: Ritual instructions
+2025-03-24 21:58:58,130 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 21:59:27,577 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 22:04:10,450 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 22:04:10,450 - INFO - Randomly selected artefact type: Social media archives
+2025-03-24 22:04:10,454 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 22:04:36,434 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 22:10:23,598 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 22:10:23,598 - INFO - Randomly selected artefact type: Alternative currency systems
+2025-03-24 22:10:23,601 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 22:10:49,738 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 22:13:10,205 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 22:13:10,206 - INFO - Randomly selected artefact type: Adaptive reuse applications
+2025-03-24 22:13:10,208 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 22:13:42,628 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 22:15:07,289 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 22:15:07,289 - INFO - Randomly selected artefact type: Access permission structures
+2025-03-24 22:15:07,290 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 22:15:33,507 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 22:17:33,594 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 22:17:33,594 - INFO - Randomly selected artefact type: User manuals for buildings
+2025-03-24 22:17:33,598 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 22:17:36,047 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 22:17:36,047 - INFO - Randomly selected artefact type: Microbiome surveys
+2025-03-24 22:17:36,049 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 22:18:01,245 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 22:20:57,170 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 22:20:57,171 - INFO - Randomly selected artefact type: Protest ephemera
+2025-03-24 22:20:57,174 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 22:21:26,180 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 22:22:50,530 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 22:22:50,530 - INFO - Randomly selected artefact type: Digital twin update logs
+2025-03-24 22:22:50,532 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 22:23:10,980 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 22:24:22,099 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 22:24:22,099 - INFO - Randomly selected artefact type: Weather response protocols
+2025-03-24 22:24:22,101 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 22:24:41,894 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 22:26:04,604 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 22:26:04,604 - INFO - Randomly selected artefact type: Generational transition plans
+2025-03-24 22:26:04,606 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 22:26:26,485 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 22:30:39,094 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 22:30:39,094 - INFO - Randomly selected artefact type: Soil health reports
+2025-03-24 22:30:39,097 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 22:30:58,536 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 22:32:26,915 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 22:32:26,915 - INFO - Randomly selected artefact type: Resource sharing agreements
+2025-03-24 22:32:26,918 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 22:32:47,926 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 22:40:34,876 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 22:40:34,876 - INFO - Randomly selected artefact type: Personal inventories
+2025-03-24 22:40:34,880 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 22:40:54,156 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 22:45:04,673 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 22:45:04,674 - INFO - Randomly selected artefact type: Handwritten notes between residents
+2025-03-24 22:45:04,677 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 22:45:29,439 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 22:47:23,775 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 22:47:23,776 - INFO - Randomly selected artefact type: Resource sharing agreements
+2025-03-24 22:47:23,778 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 22:47:42,245 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 22:52:50,984 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 22:52:50,984 - INFO - Randomly selected artefact type: Migration path maps
+2025-03-24 22:52:50,986 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 22:53:16,849 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 22:59:33,469 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 22:59:33,469 - INFO - Randomly selected artefact type: Soil health reports
+2025-03-24 22:59:33,471 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 23:00:00,577 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 23:03:42,919 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 23:03:42,920 - INFO - Randomly selected artefact type: Architectural fiction
+2025-03-24 23:03:42,924 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 23:04:11,261 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 23:35:44,452 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 23:35:44,452 - INFO - Randomly selected artefact type: Personal inventories
+2025-03-24 23:35:44,456 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 23:36:12,927 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 23:42:36,452 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 23:42:36,452 - INFO - Randomly selected artefact type: Social media archives
+2025-03-24 23:42:36,454 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 23:43:03,731 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 23:45:39,649 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 23:45:39,650 - INFO - Randomly selected artefact type: Growth/decay monitoring logs
+2025-03-24 23:45:39,652 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 23:46:04,247 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 23:50:44,211 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 23:50:44,211 - INFO - Randomly selected artefact type: Multispecies cohabitation agreements
+2025-03-24 23:50:44,213 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 23:51:09,297 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 23:52:32,717 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 23:52:32,717 - INFO - Randomly selected artefact type: Access permission structures
+2025-03-24 23:52:32,719 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 23:52:56,008 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 23:55:30,778 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 23:55:30,778 - INFO - Randomly selected artefact type: Growth/decay monitoring logs
+2025-03-24 23:55:30,781 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 23:55:56,285 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 23:57:18,216 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 23:57:18,216 - INFO - Randomly selected artefact type: Counterfactual histories
+2025-03-24 23:57:18,218 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 23:57:46,526 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-24 23:59:04,592 - INFO - Successfully loaded artefact types: ['Resident diaries or journals', 'Family photo albums', 'Handwritten notes between residents', 'Medical records', 'Personal inventories', 'Community bulletin board postings', 'Meeting minutes from tenant associations', 'Conflict resolution protocols', 'Oral histories transcripts', 'Recipe collections', 'Adaptive reuse applications', 'Archaeological site reports', 'Growth/decay monitoring logs', 'Seasonal usage schedules', 'Generational transition plans', 'Resource sharing agreements', 'Alternative currency systems', 'Energy production and consumption logs', 'Repair economy invoices', 'Harvest records', 'API documentation for building systems', 'Social media archives', 'Sensor data visualizations', 'Digital twin update logs', 'Access permission structures', 'Alternative building codes', 'Architectural fiction', 'Counterfactual histories', 'Protest ephemera', 'Ritual instructions', 'Multispecies cohabitation agreements', 'Soil health reports', 'Migration path maps', 'Weather response protocols', 'Microbiome surveys', 'User manuals for buildings', 'Fictional newspaper articles', 'Catalogs from the future', 'Institutional policy documents', 'Maintenance guides', 'Public notices or announcements']
+2025-03-24 23:59:04,592 - INFO - Randomly selected artefact type: Public notices or announcements
+2025-03-24 23:59:04,594 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-24 23:59:26,722 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-25 00:08:30,494 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 00:08:30,499 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-25 00:08:57,305 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-25 00:10:56,246 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 00:10:56,250 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-25 00:11:22,543 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-25 00:15:19,405 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 00:15:19,411 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-25 00:15:40,784 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-25 00:22:44,831 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 00:22:44,834 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-25 00:23:09,557 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-25 00:26:00,129 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 00:26:00,134 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-25 00:26:25,154 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-25 00:28:43,890 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 00:28:43,894 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-25 00:29:14,966 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-25 00:31:13,199 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 00:31:13,203 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-25 00:31:34,893 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-25 00:34:25,287 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 00:34:25,290 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-25 00:34:52,465 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-25 00:36:58,167 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 00:36:58,173 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-25 00:37:24,693 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-25 00:38:29,971 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 00:38:29,975 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-25 00:38:51,253 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-25 00:40:34,367 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 00:40:34,370 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-25 00:41:07,739 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-25 00:44:11,582 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 00:44:11,589 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-25 00:44:33,885 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-25 00:46:23,398 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 00:46:54,610 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 00:46:54,615 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-25 00:47:21,624 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-25 00:48:38,944 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 00:48:38,949 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-25 00:49:13,138 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-25 00:53:42,799 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 00:53:42,803 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-25 00:54:08,505 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-25 00:56:45,500 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 00:56:45,504 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-25 00:57:10,459 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-25 01:01:19,784 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 01:02:30,986 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 01:02:30,992 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-25 01:03:07,808 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-25 01:03:21,164 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 01:05:46,439 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 01:05:46,444 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-25 01:06:11,301 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-25 16:29:39,011 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 16:30:06,404 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 16:30:40,802 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 16:30:45,867 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 16:31:27,868 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 16:31:29,610 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 16:36:40,763 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 16:37:38,997 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 16:37:39,019 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-25 16:38:19,640 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-25 16:38:52,636 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 16:39:51,525 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 16:39:51,529 - DEBUG - Starting new HTTPS connection (1): api.anthropic.com:443
+2025-03-25 16:39:52,294 - DEBUG - https://api.anthropic.com:443 "POST /v1/messages HTTP/1.1" 401 89
+2025-03-25 16:41:24,113 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 16:41:24,119 - DEBUG - Starting new HTTPS connection (1): api.anthropic.com:443
+2025-03-25 16:41:24,876 - DEBUG - https://api.anthropic.com:443 "POST /v1/messages HTTP/1.1" 401 89
+2025-03-25 16:46:52,881 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 16:46:52,886 - DEBUG - Starting new HTTPS connection (1): api.perplexity.ai:443
+2025-03-25 16:47:34,854 - DEBUG - https://api.perplexity.ai:443 "POST /chat/completions HTTP/1.1" 200 None
+2025-03-25 16:48:57,193 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 16:48:57,197 - DEBUG - Starting new HTTPS connection (1): api.anthropic.com:443
+2025-03-25 16:48:57,976 - DEBUG - https://api.anthropic.com:443 "POST /v1/messages HTTP/1.1" 401 89
+2025-03-25 16:57:31,529 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 16:57:31,533 - DEBUG - Starting new HTTPS connection (1): api.anthropic.com:443
+2025-03-25 16:57:32,350 - DEBUG - https://api.anthropic.com:443 "POST /v1/messages HTTP/1.1" 401 89
+2025-03-25 16:59:50,085 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 16:59:50,091 - DEBUG - Starting new HTTPS connection (1): api.anthropic.com:443
+2025-03-25 16:59:50,860 - DEBUG - https://api.anthropic.com:443 "POST /v1/messages HTTP/1.1" 401 89
+2025-03-25 17:07:55,214 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 17:07:55,216 - DEBUG - Using headers for anthropic: ['Content-Type', 'anthropic-version', 'x-api-key']
+2025-03-25 17:07:55,216 - INFO - Using provider: anthropic
+2025-03-25 17:07:55,217 - DEBUG - Sending request to: https://api.anthropic.com/v1/messages
+2025-03-25 17:07:55,217 - DEBUG - Request data keys: ['model', 'max_tokens', 'temperature', 'system', 'messages']
+2025-03-25 17:07:55,219 - DEBUG - Starting new HTTPS connection (1): api.anthropic.com:443
+2025-03-25 17:08:18,387 - DEBUG - https://api.anthropic.com:443 "POST /v1/messages HTTP/1.1" 200 None
+2025-03-25 17:08:18,394 - DEBUG - Response status code: 200
+2025-03-25 17:08:18,394 - DEBUG - Response keys: ['id', 'type', 'role', 'model', 'content', 'stop_reason', 'stop_sequence', 'usage']
+2025-03-25 17:08:45,124 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 17:08:45,126 - DEBUG - Using headers for anthropic: ['Content-Type', 'anthropic-version', 'x-api-key']
+2025-03-25 17:08:45,126 - INFO - Using provider: anthropic
+2025-03-25 17:08:45,126 - DEBUG - Sending request to: https://api.anthropic.com/v1/messages
+2025-03-25 17:08:45,126 - DEBUG - Request data keys: ['model', 'max_tokens', 'temperature', 'system', 'messages']
+2025-03-25 17:08:45,128 - DEBUG - Starting new HTTPS connection (1): api.anthropic.com:443
+2025-03-25 17:09:10,512 - DEBUG - https://api.anthropic.com:443 "POST /v1/messages HTTP/1.1" 200 None
+2025-03-25 17:09:10,513 - DEBUG - Response status code: 200
+2025-03-25 17:09:10,513 - DEBUG - Response keys: ['id', 'type', 'role', 'model', 'content', 'stop_reason', 'stop_sequence', 'usage']
+2025-03-25 17:11:51,131 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 17:15:55,302 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 17:15:55,304 - DEBUG - Using headers for anthropic: ['Content-Type', 'anthropic-version', 'x-api-key']
+2025-03-25 17:15:55,304 - INFO - Using provider: anthropic
+2025-03-25 17:15:55,304 - DEBUG - Sending request to: https://api.anthropic.com/v1/messages
+2025-03-25 17:15:55,304 - DEBUG - Request data keys: ['model', 'max_tokens', 'temperature', 'system', 'messages']
+2025-03-25 17:15:55,306 - DEBUG - Starting new HTTPS connection (1): api.anthropic.com:443
+2025-03-25 17:16:18,172 - DEBUG - https://api.anthropic.com:443 "POST /v1/messages HTTP/1.1" 200 None
+2025-03-25 17:16:18,172 - DEBUG - Response status code: 200
+2025-03-25 17:16:18,172 - DEBUG - Response keys: ['id', 'type', 'role', 'model', 'content', 'stop_reason', 'stop_sequence', 'usage']
+2025-03-25 17:16:43,678 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 17:16:47,327 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 17:16:48,044 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 17:16:48,741 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 17:16:50,104 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 17:26:56,080 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 17:26:56,083 - DEBUG - Using headers for anthropic: ['Content-Type', 'anthropic-version', 'x-api-key']
+2025-03-25 17:26:56,083 - INFO - Using provider: anthropic
+2025-03-25 17:26:56,083 - DEBUG - Sending request to: https://api.anthropic.com/v1/messages
+2025-03-25 17:26:56,083 - DEBUG - Request data keys: ['model', 'max_tokens', 'temperature', 'system', 'messages']
+2025-03-25 17:26:56,085 - DEBUG - Starting new HTTPS connection (1): api.anthropic.com:443
+2025-03-25 17:27:17,883 - DEBUG - https://api.anthropic.com:443 "POST /v1/messages HTTP/1.1" 200 None
+2025-03-25 17:27:17,885 - DEBUG - Response status code: 200
+2025-03-25 17:27:17,885 - DEBUG - Response keys: ['id', 'type', 'role', 'model', 'content', 'stop_reason', 'stop_sequence', 'usage']
+2025-03-25 17:29:26,672 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 17:29:26,674 - DEBUG - Using headers for anthropic: ['Content-Type', 'anthropic-version', 'x-api-key']
+2025-03-25 17:29:26,674 - INFO - Using provider: anthropic
+2025-03-25 17:29:26,675 - DEBUG - Sending request to: https://api.anthropic.com/v1/messages
+2025-03-25 17:29:26,675 - DEBUG - Request data keys: ['model', 'max_tokens', 'temperature', 'system', 'messages']
+2025-03-25 17:29:26,676 - DEBUG - Starting new HTTPS connection (1): api.anthropic.com:443
+2025-03-25 17:30:00,741 - DEBUG - https://api.anthropic.com:443 "POST /v1/messages HTTP/1.1" 200 None
+2025-03-25 17:30:00,742 - DEBUG - Response status code: 200
+2025-03-25 17:30:00,742 - DEBUG - Response keys: ['id', 'type', 'role', 'model', 'content', 'stop_reason', 'stop_sequence', 'usage']
+2025-03-25 17:34:56,602 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 17:34:56,604 - DEBUG - Using headers for anthropic: ['Content-Type', 'anthropic-version', 'x-api-key']
+2025-03-25 17:34:56,604 - INFO - Using provider: anthropic
+2025-03-25 17:34:56,605 - DEBUG - Sending request to: https://api.anthropic.com/v1/messages
+2025-03-25 17:34:56,605 - DEBUG - Request data keys: ['model', 'max_tokens', 'temperature', 'system', 'messages']
+2025-03-25 17:34:56,606 - DEBUG - Starting new HTTPS connection (1): api.anthropic.com:443
+2025-03-25 17:35:32,087 - DEBUG - https://api.anthropic.com:443 "POST /v1/messages HTTP/1.1" 200 None
+2025-03-25 17:35:32,089 - DEBUG - Response status code: 200
+2025-03-25 17:35:32,090 - DEBUG - Response keys: ['id', 'type', 'role', 'model', 'content', 'stop_reason', 'stop_sequence', 'usage']
+2025-03-25 17:48:03,947 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 17:48:03,950 - DEBUG - Using headers for anthropic: ['Content-Type', 'anthropic-version', 'x-api-key']
+2025-03-25 17:48:03,950 - INFO - Using provider: anthropic
+2025-03-25 17:48:03,950 - DEBUG - Sending request to: https://api.anthropic.com/v1/messages
+2025-03-25 17:48:03,950 - DEBUG - Request data keys: ['model', 'max_tokens', 'temperature', 'system', 'messages']
+2025-03-25 17:48:03,952 - DEBUG - Starting new HTTPS connection (1): api.anthropic.com:443
+2025-03-25 17:48:37,468 - DEBUG - https://api.anthropic.com:443 "POST /v1/messages HTTP/1.1" 200 None
+2025-03-25 17:48:37,469 - DEBUG - Response status code: 200
+2025-03-25 17:48:37,469 - DEBUG - Response keys: ['id', 'type', 'role', 'model', 'content', 'stop_reason', 'stop_sequence', 'usage']
+2025-03-25 17:48:37,469 - WARNING - Response approaching token limit: 7181 tokens
+2025-03-25 17:51:19,862 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 17:51:19,864 - DEBUG - Using headers for anthropic: ['Content-Type', 'anthropic-version', 'x-api-key']
+2025-03-25 17:51:19,864 - INFO - Using provider: anthropic
+2025-03-25 17:51:19,864 - DEBUG - Sending request to: https://api.anthropic.com/v1/messages
+2025-03-25 17:51:19,864 - DEBUG - Request data keys: ['model', 'max_tokens', 'temperature', 'system', 'messages']
+2025-03-25 17:51:19,866 - DEBUG - Starting new HTTPS connection (1): api.anthropic.com:443
+2025-03-25 17:51:50,503 - DEBUG - https://api.anthropic.com:443 "POST /v1/messages HTTP/1.1" 200 None
+2025-03-25 17:51:50,503 - DEBUG - Response status code: 200
+2025-03-25 17:51:50,503 - DEBUG - Response keys: ['id', 'type', 'role', 'model', 'content', 'stop_reason', 'stop_sequence', 'usage']
+2025-03-25 17:51:50,503 - WARNING - Response approaching token limit: 6412 tokens
+2025-03-25 17:59:55,508 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 17:59:55,510 - DEBUG - Using headers for anthropic: ['Content-Type', 'anthropic-version', 'x-api-key']
+2025-03-25 17:59:55,510 - INFO - Using provider: anthropic
+2025-03-25 17:59:55,511 - DEBUG - Sending request to: https://api.anthropic.com/v1/messages
+2025-03-25 17:59:55,511 - DEBUG - Request data keys: ['model', 'max_tokens', 'temperature', 'system', 'messages']
+2025-03-25 17:59:55,512 - DEBUG - Starting new HTTPS connection (1): api.anthropic.com:443
+2025-03-25 18:00:28,451 - DEBUG - https://api.anthropic.com:443 "POST /v1/messages HTTP/1.1" 200 None
+2025-03-25 18:00:28,456 - DEBUG - Response status code: 200
+2025-03-25 18:00:28,456 - DEBUG - Response keys: ['id', 'type', 'role', 'model', 'content', 'stop_reason', 'stop_sequence', 'usage']
+2025-03-25 18:00:28,456 - WARNING - Response approaching token limit: 6785 tokens
+2025-03-25 21:57:57,150 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 21:57:57,155 - DEBUG - Using headers for anthropic: ['Content-Type', 'anthropic-version', 'x-api-key']
+2025-03-25 21:57:57,156 - INFO - Using provider: anthropic
+2025-03-25 21:57:57,157 - DEBUG - Sending request to: https://api.anthropic.com/v1/messages
+2025-03-25 21:57:57,157 - DEBUG - Request data keys: ['model', 'max_tokens', 'temperature', 'system', 'messages']
+2025-03-25 21:57:57,168 - DEBUG - Starting new HTTPS connection (1): api.anthropic.com:443
+2025-03-25 21:58:30,927 - DEBUG - https://api.anthropic.com:443 "POST /v1/messages HTTP/1.1" 200 None
+2025-03-25 21:58:30,932 - DEBUG - Response status code: 200
+2025-03-25 21:58:30,932 - DEBUG - Response keys: ['id', 'type', 'role', 'model', 'content', 'stop_reason', 'stop_sequence', 'usage']
+2025-03-25 21:58:30,932 - WARNING - Response approaching token limit: 7015 tokens
+2025-03-25 22:06:06,211 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 22:06:06,213 - DEBUG - Using headers for anthropic: ['Content-Type', 'anthropic-version', 'x-api-key']
+2025-03-25 22:06:06,213 - INFO - Using provider: anthropic
+2025-03-25 22:06:06,214 - DEBUG - Sending request to: https://api.anthropic.com/v1/messages
+2025-03-25 22:06:06,214 - DEBUG - Request data keys: ['model', 'max_tokens', 'temperature', 'system', 'messages']
+2025-03-25 22:06:06,215 - DEBUG - Starting new HTTPS connection (1): api.anthropic.com:443
+2025-03-25 22:06:41,268 - DEBUG - https://api.anthropic.com:443 "POST /v1/messages HTTP/1.1" 200 None
+2025-03-25 22:06:41,272 - DEBUG - Response status code: 200
+2025-03-25 22:06:41,272 - DEBUG - Response keys: ['id', 'type', 'role', 'model', 'content', 'stop_reason', 'stop_sequence', 'usage']
+2025-03-25 22:06:41,272 - WARNING - Response approaching token limit: 7095 tokens
+2025-03-25 22:07:57,611 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 22:07:57,614 - DEBUG - Using headers for anthropic: ['Content-Type', 'anthropic-version', 'x-api-key']
+2025-03-25 22:07:57,614 - INFO - Using provider: anthropic
+2025-03-25 22:07:57,614 - DEBUG - Sending request to: https://api.anthropic.com/v1/messages
+2025-03-25 22:07:57,614 - DEBUG - Request data keys: ['model', 'max_tokens', 'temperature', 'system', 'messages']
+2025-03-25 22:07:57,615 - DEBUG - Starting new HTTPS connection (1): api.anthropic.com:443
+2025-03-25 22:08:27,390 - DEBUG - https://api.anthropic.com:443 "POST /v1/messages HTTP/1.1" 200 None
+2025-03-25 22:08:27,396 - DEBUG - Response status code: 200
+2025-03-25 22:08:27,396 - DEBUG - Response keys: ['id', 'type', 'role', 'model', 'content', 'stop_reason', 'stop_sequence', 'usage']
+2025-03-25 22:08:27,396 - WARNING - Response approaching token limit: 6405 tokens
+2025-03-25 22:10:56,643 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Temporal/Transformative', 'Economic/Resource', 'Digital/Network', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 22:10:56,646 - DEBUG - Using headers for anthropic: ['Content-Type', 'anthropic-version', 'x-api-key']
+2025-03-25 22:10:56,646 - INFO - Using provider: anthropic
+2025-03-25 22:10:56,647 - DEBUG - Sending request to: https://api.anthropic.com/v1/messages
+2025-03-25 22:10:56,647 - DEBUG - Request data keys: ['model', 'max_tokens', 'temperature', 'system', 'messages']
+2025-03-25 22:10:56,648 - DEBUG - Starting new HTTPS connection (1): api.anthropic.com:443
+2025-03-25 22:11:26,871 - DEBUG - https://api.anthropic.com:443 "POST /v1/messages HTTP/1.1" 200 None
+2025-03-25 22:11:26,887 - DEBUG - Response status code: 200
+2025-03-25 22:11:26,887 - DEBUG - Response keys: ['id', 'type', 'role', 'model', 'content', 'stop_reason', 'stop_sequence', 'usage']
+2025-03-25 22:11:26,888 - WARNING - Response approaching token limit: 6583 tokens
+2025-03-25 22:28:17,097 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Economic/Resource', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 22:28:17,099 - DEBUG - Using headers for anthropic: ['Content-Type', 'anthropic-version', 'x-api-key']
+2025-03-25 22:28:17,099 - INFO - Using provider: anthropic
+2025-03-25 22:28:17,100 - DEBUG - Sending request to: https://api.anthropic.com/v1/messages
+2025-03-25 22:28:17,100 - DEBUG - Request data keys: ['model', 'max_tokens', 'temperature', 'system', 'messages']
+2025-03-25 22:28:17,102 - DEBUG - Starting new HTTPS connection (1): api.anthropic.com:443
+2025-03-25 22:28:48,842 - DEBUG - https://api.anthropic.com:443 "POST /v1/messages HTTP/1.1" 200 None
+2025-03-25 22:28:48,850 - DEBUG - Response status code: 200
+2025-03-25 22:28:48,862 - DEBUG - Response keys: ['id', 'type', 'role', 'model', 'content', 'stop_reason', 'stop_sequence', 'usage']
+2025-03-25 22:28:48,862 - WARNING - Response approaching token limit: 6886 tokens
+2025-03-25 22:31:18,729 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Economic/Resource', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 22:31:18,731 - DEBUG - Using headers for anthropic: ['Content-Type', 'anthropic-version', 'x-api-key']
+2025-03-25 22:31:18,731 - INFO - Using provider: anthropic
+2025-03-25 22:31:18,731 - DEBUG - Sending request to: https://api.anthropic.com/v1/messages
+2025-03-25 22:31:18,732 - DEBUG - Request data keys: ['model', 'max_tokens', 'temperature', 'system', 'messages']
+2025-03-25 22:31:18,733 - DEBUG - Starting new HTTPS connection (1): api.anthropic.com:443
+2025-03-25 22:31:27,449 - DEBUG - https://api.anthropic.com:443 "POST /v1/messages HTTP/1.1" 529 75
+2025-03-25 22:31:27,450 - DEBUG - Response status code: 529
+2025-03-25 22:31:27,450 - ERROR - API Error: 529 - {"type":"error","error":{"type":"overloaded_error","message":"Overloaded"}}
+2025-03-25 22:32:16,578 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Economic/Resource', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-25 22:32:16,583 - DEBUG - Using headers for anthropic: ['Content-Type', 'anthropic-version', 'x-api-key']
+2025-03-25 22:32:16,583 - INFO - Using provider: anthropic
+2025-03-25 22:32:16,584 - DEBUG - Sending request to: https://api.anthropic.com/v1/messages
+2025-03-25 22:32:16,584 - DEBUG - Request data keys: ['model', 'max_tokens', 'temperature', 'system', 'messages']
+2025-03-25 22:32:16,586 - DEBUG - Starting new HTTPS connection (1): api.anthropic.com:443
+2025-03-25 22:32:52,525 - DEBUG - https://api.anthropic.com:443 "POST /v1/messages HTTP/1.1" 200 None
+2025-03-25 22:32:52,527 - DEBUG - Response status code: 200
+2025-03-25 22:32:52,527 - DEBUG - Response keys: ['id', 'type', 'role', 'model', 'content', 'stop_reason', 'stop_sequence', 'usage']
+2025-03-25 22:32:52,527 - WARNING - Response approaching token limit: 6810 tokens
+2025-03-26 07:01:06,623 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Economic/Resource', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
+2025-03-26 07:04:44,983 - INFO - Successfully loaded artefact types: ['Device/Object', 'Personal/Intimate', 'Community/Collective', 'Economic/Resource', 'Speculative/Critical', 'Ecological/More-than-human', 'Institutional/Formal', 'Maintenance/Care']
