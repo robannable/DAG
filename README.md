@@ -7,17 +7,22 @@ A specialized AI tool that generates speculative documents and artefacts for arc
 ```bash
 # Clone the repository
 git clone https://github.com/robannable/DAG.git
-cd diegetic-artefact-generator
+cd Generator
 
-# Install dependencies
+# (Option A) One-time setup (Python env + deps)
+./setup.sh   # macOS/Linux
+# or
+setup.bat    # Windows
+
+# (Option B) Manual install
 pip install -r requirements.txt
 
-# Set up your API keys in .env
-echo "PERPLEXITY_API_KEY=your_perplexity_api_key_here" > .env
-echo "OPENAI_API_KEY=your_openai_api_key_here" >> .env
-echo "ANTHROPIC_API_KEY=your_anthropic_api_key_here" >> .env
+# Create a .env with any cloud API keys you plan to use
+echo "PERPLEXITY_API_KEY=..." > .env
+echo "OPENAI_API_KEY=..." >> .env
+echo "ANTHROPIC_API_KEY=..." >> .env
 
-# Run the application
+# Run the app
 streamlit run DAG.py
 ```
 
@@ -77,6 +82,32 @@ The tool uses three config files:
 - `model_config.json`: AI model settings and provider configurations, including:
   - Cloud providers (OpenAI, Anthropic, Perplexity)
   - Local inference through Ollama
+
+### Providers and API keys
+
+- Set your keys in `.env` (loaded via `python-dotenv`):
+  - `PERPLEXITY_API_KEY`
+  - `OPENAI_API_KEY`
+  - `ANTHROPIC_API_KEY`
+- Ollama is local and does not require an API key.
+
+### Ollama (local models)
+
+- Install Ollama from `https://ollama.com`
+- Ensure the daemon is running (defaults to `http://localhost:11434`)
+- Pull at least one model, e.g.: `ollama pull llama3.1` or `ollama pull cogito`
+- In the app sidebar, choose provider “Ollama”. The app will call the local server to list available models and show them in a dropdown. Your selection is saved back to `model_config.json`.
+- If no models are found, a text input is shown and a warning suggests starting Ollama and pulling a model.
+
+### Output and logs
+
+- Generated artefacts are saved under `artefacts/` as timestamped `.md`
+- Debug logs are written to `artefact_generator_debug.log`
+
+### Common issues
+
+- “No Ollama models found”: Start Ollama and pull a model (`ollama serve` may be required on some systems)
+- API error for cloud providers: Ensure the corresponding key is present in `.env`
 
 ## Contributing
 
