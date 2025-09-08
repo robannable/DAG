@@ -166,16 +166,22 @@ def get_model_temperature():
     provider = model_config.get('provider', '')
     default_temp = model_config.get("temperature", 0.7)
     
-    # Define temperature ranges per provider
-    temp_ranges = {
-        'anthropic': (0.0, 1.0),
-        'perplexity': (0.0, 1.99),
-        'openai': (0.0, 2.0),
-        'ollama': (0.0, 2.0)
-    }
+    # Get temperature range from config
+    temp_range = model_config.get("temperature_range", {
+        "min": 0.0,
+        "max": 1.0,
+        "step": 0.1
+    })
     
-    # Get min/max for current provider, default to 0-1 if provider not found
-    min_temp, max_temp = temp_ranges.get(provider, (0.0, 1.0))
+    # Validate temperature range
+    min_temp = float(temp_range.get("min", 0.0))
+    max_temp = float(temp_range.get("max", 1.0))
+    step = float(temp_range.get("step", 0.1))
+    
+    # Ensure valid range
+    if min_temp >= max_temp:
+        logging.warning(f"Invalid temperature range for {provider}: min ({min_temp}) >= max ({max_temp}). Using default range.")
+        min_temp, max_temp = 0.0, 1.0
     
     # Ensure default temperature is within valid range
     default_temp = min(max(default_temp, min_temp), max_temp)
@@ -185,9 +191,9 @@ def get_model_temperature():
         min_value=min_temp,
         max_value=max_temp,
         value=default_temp,
-        step=0.1,
+        step=step,
         label_visibility="visible",
-        help="Technical: Temperature controls the randomness in the model's token selection process. Lower values increase the probability of selecting the most likely next token, while higher values make the distribution more uniform across all possible tokens."
+        help=f"Technical: Temperature controls the randomness in the model's token selection process. Lower values increase the probability of selecting the most likely next token, while higher values make the distribution more uniform across all possible tokens. Range: {min_temp} to {max_temp}"
     )
     
     st.caption("Lower values (0) create focused outputs, higher values create more creative, varied outputs")
@@ -432,6 +438,18 @@ def generate_artefact(project_description, date, user_bios, themes, location, se
         st.error(error_message)
         return error_message
 
+def get_available_ollama_models():
+    """Get list of available Ollama models"""
+    try:
+        response = requests.get("http://localhost:11434/api/tags")
+        if response.status_code == 200:
+            models = response.json().get('models', [])
+            return [model['name'] for model in models]
+        return []
+    except Exception as e:
+        logging.error(f"Error fetching Ollama models: {str(e)}")
+        return []
+
 # Main interface
 st.title("🎭 Diegetic Artefact Generator")
 st.markdown("""
@@ -475,12 +493,28 @@ with st.sidebar:
 
     # Show Ollama model input if needed
     if st.session_state.current_provider == 'ollama':
-        ollama_model = st.text_input(
-            "Ollama Model Name",
-            value=config['providers']['ollama'].get('model', 'llama2'),
-            help="Enter the name of your locally installed Ollama model (e.g., llama2, mistral, codellama)"
-        )
+        available_models = get_available_ollama_models()
+        if not available_models:
+            st.warning("No Ollama models found. Please make sure Ollama is running and you have pulled at least one model.")
+            ollama_model = st.text_input(
+                "Ollama Model Name",
+                value=config['providers']['ollama'].get('model', 'cogito'),
+                help="Enter the name of your locally installed Ollama model"
+            )
+        else:
+            ollama_model = st.selectbox(
+                "Select Ollama Model",
+                options=available_models,
+                index=available_models.index(config['providers']['ollama'].get('model', 'cogito')) if config['providers']['ollama'].get('model', 'cogito') in available_models else 0,
+                help="Select from your locally installed Ollama models"
+            )
         config['providers']['ollama']['model'] = ollama_model
+        # Persist selected Ollama model
+        try:
+            with open('model_config.json', 'w') as f:
+                json.dump(config, f, indent=4)
+        except Exception as e:
+            logging.error(f"Error saving selected Ollama model: {str(e)}")
         st.caption("Make sure you have pulled your chosen model using 'ollama pull model_name'")
     
     # Temperature slider
