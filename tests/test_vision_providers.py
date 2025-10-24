@@ -1,10 +1,7 @@
-"""Tests for vision API providers"""
+"""Tests for vision API providers - Anthropic only"""
 import pytest
 from unittest.mock import Mock
-from api.vision_providers import (
-    prepare_vision_request_anthropic,
-    prepare_vision_request_openai
-)
+from api.vision_providers import prepare_vision_request_anthropic
 
 
 def test_prepare_vision_request_anthropic():
@@ -47,54 +44,6 @@ def test_prepare_vision_request_anthropic():
     assert content[0]["type"] == "image"
     assert content[0]["source"]["type"] == "base64"
     assert content[0]["source"]["media_type"] == "image/png"
-
-    # Check text structure
-    assert content[1]["type"] == "text"
-    assert "Test prompt" in content[1]["text"]
-
-
-def test_prepare_vision_request_openai():
-    """Test preparing OpenAI vision request"""
-    model_config = {
-        "provider": "openai",
-        "model": "gpt-4-vision",
-        "max_tokens": 4000,
-        "temperature": 0.7
-    }
-
-    images = [
-        {
-            'name': 'test.png',
-            'base64': 'base64data',
-            'media_type': 'image/png',
-            'size': 1024
-        }
-    ]
-
-    data = prepare_vision_request_openai(
-        "Test prompt",
-        images,
-        model_config
-    )
-
-    assert data["model"] == "gpt-4-vision"
-    assert data["max_tokens"] == 4000
-    assert "messages" in data
-
-    # Check messages structure
-    assert len(data["messages"]) == 2  # system + user
-    assert data["messages"][0]["role"] == "system"
-    assert data["messages"][1]["role"] == "user"
-
-    # Check content has both image and text
-    content = data["messages"][1]["content"]
-    assert isinstance(content, list)
-    assert len(content) == 2  # 1 image + 1 text
-
-    # Check image structure
-    assert content[0]["type"] == "image_url"
-    assert "url" in content[0]["image_url"]
-    assert "data:image/png;base64" in content[0]["image_url"]["url"]
 
     # Check text structure
     assert content[1]["type"] == "text"

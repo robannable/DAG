@@ -15,17 +15,17 @@ def render_image_upload_section() -> tuple:
     Returns:
         Tuple of (uploaded_files, use_vision)
     """
-    with st.expander("📸 Visual Context (Optional - Requires Anthropic Claude or OpenAI)", expanded=False):
+    with st.expander("📸 Visual Context (Optional - Requires Anthropic Claude)", expanded=False):
         st.markdown("""
 Upload sketches, diagrams, site photos, or reference images to enrich your artifact generation.
-The AI will analyze these visuals and incorporate spatial, material, and contextual insights.
+Claude will analyze these visuals using AI vision and incorporate spatial, material, and contextual insights.
 
 **Works best with:**
-- Concept sketches and drawings
-- Site plans with annotations
-- Diagrams showing relationships
-- Context photographs
-- Material references
+- Concept sketches and drawings with annotations
+- Site plans showing spatial relationships
+- Diagrams showing workflows or connections
+- Context photographs of site conditions
+- Material references and mood boards
         """)
 
         uploaded_files = st.file_uploader(
@@ -107,25 +107,28 @@ def render_vision_status_messages(
     """
     provider = model_config.get('provider', '')
 
-    # Check if provider supports vision
-    vision_supported = provider in ['anthropic', 'openai']
+    # Check if provider supports vision (Anthropic only)
+    vision_supported = provider == 'anthropic'
 
     if uploaded_files and use_vision:
         if not vision_supported:
             st.error(f"""
-⚠️ Vision features are not supported with the current provider: **{provider}**
+⚠️ Vision features are only supported with Anthropic Claude
 
-Please switch to:
-- **Anthropic Claude** (Recommended - excellent vision capabilities)
-- **OpenAI GPT-4 Vision**
+**Current provider:** {provider}
 
-You can continue without vision analysis, or switch providers in the sidebar.
+**To use vision:**
+- Switch to **Anthropic Claude** in the sidebar
+- Or continue without vision analysis (text-only generation)
+
+**Why Anthropic?** Claude has excellent vision capabilities for analyzing architectural sketches,
+diagrams, annotations, and understanding spatial relationships.
             """)
             return False
 
         st.success(f"""
-✅ Vision analysis enabled with **{provider}**
-The AI will analyze your images and incorporate visual insights into the artifact.
+✅ Vision analysis enabled with Anthropic Claude
+Claude will analyze your images and incorporate visual insights into the artifact.
             """)
 
     return vision_supported
