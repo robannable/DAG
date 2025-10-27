@@ -152,7 +152,6 @@ with tab1:
         with col2:
             submitted = st.form_submit_button(
                 "Generate Artefact" if not (uploaded_files and use_vision) else "Generate with Vision 🔍",
-                use_container_width=True,
                 type="primary"
             )
         st.markdown("</div>", unsafe_allow_html=True)
