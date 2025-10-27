@@ -1,12 +1,12 @@
 """
-Diegetic Artefact Generator (DAG) - Vision Enhanced
-Multimodal version supporting image inputs with AI vision interpretation
+Diegetic Artefact Generator (DAG)
+Generate speculative architectural artefacts with optional vision analysis
 """
 import streamlit as st
 
 # Configure the page - this must be the first st command
 st.set_page_config(
-    page_title="DAG - Vision Enhanced",
+    page_title="Diegetic Artefact Generator",
     page_icon="🎭",
     layout="wide"
 )
@@ -77,10 +77,9 @@ if 'viewing_artifact' not in st.session_state:
 
 # Main interface
 st.title("🎭 Diegetic Artefact Generator")
-st.markdown("### Vision Enhanced - Now with Image Analysis")
 st.markdown("""
 Generate speculative documents and artefacts for architectural projects.
-**New:** Upload sketches, diagrams, or photos for AI-powered visual analysis.
+**Optional:** Upload sketches, diagrams, or photos for AI-powered visual analysis (Anthropic Claude).
 """)
 
 # Sidebar controls
