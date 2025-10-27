@@ -1,12 +1,12 @@
 """
-Diegetic Artefact Generator (DAG)
-Refactored version with modular architecture
+Diegetic Artefact Generator (DAG) - Vision Enhanced
+Multimodal version supporting image inputs with AI vision interpretation
 """
 import streamlit as st
 
 # Configure the page - this must be the first st command
 st.set_page_config(
-    page_title="Diegetic Artefact Generator",
+    page_title="DAG - Vision Enhanced",
     page_icon="🎭",
     layout="wide"
 )
@@ -24,10 +24,19 @@ from utils.config import (
     load_model_config
 )
 from utils.file_operations import save_artefact
+from utils.image_processing import prepare_images_for_api
 from api.providers import generate_artefact
+from api.vision_providers import generate_artefact_with_vision
 from api.retry import RetryConfig
 from ui.components import render_sidebar
 from ui.gallery import render_gallery, display_artifact
+from ui.image_upload import (
+    render_image_upload_section,
+    display_image_previews,
+    display_vision_interpretation,
+    render_vision_status_messages,
+    extract_think_content
+)
 
 # Set up logging
 setup_logging()
@@ -68,8 +77,11 @@ if 'viewing_artifact' not in st.session_state:
 
 # Main interface
 st.title("🎭 Diegetic Artefact Generator")
+st.markdown("### Vision Enhanced - Now with Image Analysis")
 st.markdown("""
-This tool helps architects generate diegetic artefacts—speculative objects that exist within the narrative world of an architectural project.""")
+Generate speculative documents and artefacts for architectural projects.
+**New:** Upload sketches, diagrams, or photos for AI-powered visual analysis.
+""")
 
 # Sidebar controls
 with st.sidebar:
@@ -90,6 +102,13 @@ with st.sidebar:
 tab1, tab2 = st.tabs(["Generate", "Gallery"])
 
 with tab1:
+    # Image upload section (outside form for better UX)
+    uploaded_files, use_vision = render_image_upload_section()
+
+    # Show image previews if uploaded
+    if uploaded_files:
+        display_image_previews(uploaded_files)
+
     # Input form
     with st.form("artefact_form"):
         col1, col2 = st.columns(2)
@@ -133,7 +152,7 @@ with tab1:
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
             submitted = st.form_submit_button(
-                "Generate Artefact",
+                "Generate Artefact" if not (uploaded_files and use_vision) else "Generate with Vision 🔍",
                 use_container_width=True,
                 type="primary"
             )
@@ -144,49 +163,106 @@ with tab1:
         if not all([project_description, date, user_bios, themes, location, selected_category]):
             st.warning("Please fill in all fields before generating an artefact.")
         else:
-            with st.spinner("Generating your diegetic artefact..."):
-                selected_type = {"category": selected_category, "items": [selected_category]}
+            # Load model config
+            model_config = load_model_config()
 
-                # Load model config and closing instruction
-                model_config = load_model_config()
-                closing_instruction = load_prompt_instructions()
-
-                # Create retry configuration for robustness
-                retry_config = RetryConfig(
-                    max_retries=3,
-                    base_delay=1.0,
-                    max_delay=10.0
+            # Check if using vision
+            if uploaded_files and use_vision:
+                # Check if provider supports vision
+                can_use_vision = render_vision_status_messages(
+                    uploaded_files, use_vision, model_config
                 )
 
-                # Generate artifact with retry logic
-                st.session_state.current_artefact = generate_artefact(
-                    project_description,
-                    date,
-                    user_bios,
-                    themes,
-                    location,
-                    selected_type,
-                    model_config,
-                    closing_instruction,
-                    temperature=temperature,
-                    retry_config=retry_config
-                )
+                if not can_use_vision:
+                    st.stop()
 
-                if not st.session_state.current_artefact.startswith("Error"):
-                    # Save the artefact to a file
-                    filename = save_artefact(
-                        st.session_state.current_artefact,
+                # Process images
+                with st.spinner("Processing images..."):
+                    processed_images = prepare_images_for_api(
+                        uploaded_files,
+                        resize=True,
+                        max_images=5
+                    )
+
+                if not processed_images:
+                    st.error("No valid images could be processed. Please check your image files.")
+                    st.stop()
+
+                # Generate with vision
+                with st.spinner(f"Analyzing {len(processed_images)} image(s) and generating artifact..."):
+                    selected_type = {"category": selected_category, "items": [selected_category]}
+                    closing_instruction = load_prompt_instructions()
+
+                    retry_config = RetryConfig(
+                        max_retries=3,
+                        base_delay=1.0,
+                        max_delay=10.0
+                    )
+
+                    st.session_state.current_artefact = generate_artefact_with_vision(
                         project_description,
                         date,
-                        location,
                         user_bios,
                         themes,
+                        location,
+                        selected_type,
+                        processed_images,
                         model_config,
-                        temperature,
-                        st.session_state.show_thinking
+                        closing_instruction,
+                        temperature=temperature,
+                        retry_config=retry_config
                     )
-                    st.session_state.current_filename = filename
-                    st.success(f"Artefact saved to: {filename}")
+
+            else:
+                # Standard text-only generation
+                with st.spinner("Generating your diegetic artefact..."):
+                    selected_type = {"category": selected_category, "items": [selected_category]}
+                    closing_instruction = load_prompt_instructions()
+
+                    retry_config = RetryConfig(
+                        max_retries=3,
+                        base_delay=1.0,
+                        max_delay=10.0
+                    )
+
+                    st.session_state.current_artefact = generate_artefact(
+                        project_description,
+                        date,
+                        user_bios,
+                        themes,
+                        location,
+                        selected_type,
+                        model_config,
+                        closing_instruction,
+                        temperature=temperature,
+                        retry_config=retry_config
+                    )
+
+            if not st.session_state.current_artefact.startswith("Error"):
+                # Extract thinking content if present
+                artifact_content, think_content = extract_think_content(
+                    st.session_state.current_artefact
+                )
+
+                # Save the artefact to a file
+                filename = save_artefact(
+                    st.session_state.current_artefact,
+                    project_description,
+                    date,
+                    location,
+                    user_bios,
+                    themes,
+                    model_config,
+                    temperature,
+                    st.session_state.show_thinking
+                )
+                st.session_state.current_filename = filename
+
+                # Show vision interpretation if available
+                if think_content and uploaded_files and use_vision:
+                    display_vision_interpretation(think_content)
+
+                st.success(f"✅ Artefact saved to: {filename}")
 
     # Display section (outside the form and submit block)
     if 'current_artefact' in st.session_state and not st.session_state.current_artefact.startswith("Error"):
