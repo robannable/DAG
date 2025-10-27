@@ -68,8 +68,8 @@ def display_image_previews(uploaded_files: List) -> None:
         col_idx = idx % cols_per_row
 
         with cols[col_idx]:
-            # Display image
-            st.image(uploaded_file, caption=uploaded_file.name, use_container_width=True)
+            # Display image (use_column_width for backwards compatibility)
+            st.image(uploaded_file, caption=uploaded_file.name, use_column_width=True)
 
             # Display file info
             file_size_kb = uploaded_file.size / 1024
