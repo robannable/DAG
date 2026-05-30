@@ -6,16 +6,14 @@ import requests
 from api.retry import make_api_request_with_retry, RetryConfig
 
 
-def calculate_max_tokens(project_description: str, user_bios: str, themes: str) -> int:
-    """Calculate appropriate max tokens based on input complexity"""
-    input_length = len(project_description) + len(user_bios) + len(themes)
+SYSTEM_PROMPT = """You are a dramaturgical expert that creates diegetic artefacts for architectural projects.
 
-    if input_length > 1000:
-        # Complex project needs more concise output
-        return 1400
-    else:
-        # Simpler project can have slightly more detailed output
-        return 1600
+IMPORTANT: In your response, first share your reasoning process within <think> tags. Use this format:
+<think>
+Here I analyze what would be most effective for this project...
+</think>
+
+Then provide your final output after the thinking section. The <think> section won't be visible to the end user unless they choose to see it."""
 
 
 def prepare_request_data(
@@ -26,31 +24,17 @@ def prepare_request_data(
     themes: str,
     temperature: Optional[float] = None
 ) -> Dict[str, Any]:
-    """Prepare the request data based on the provider's requirements"""
+    """Prepare the request data for the active provider (anthropic or ollama)"""
     if temperature is not None:
         model_config = model_config.copy()
         model_config["temperature"] = temperature
 
     provider = model_config.get('provider', '')
 
-    # Calculate buffer tokens for completion
-    response_tokens = model_config["max_tokens"]
-    safe_tokens = int(response_tokens * 0.9)  # Use 90% of max_tokens as safe limit
-
-    # Add token guidance to prompt
+    safe_tokens = int(model_config["max_tokens"] * 0.9)
     enhanced_prompt = prompt + f"\n\nYour response should be complete and no longer than approximately {safe_tokens} tokens."
 
     if provider == 'anthropic':
-        # Custom system prompt for Anthropic that requests thinking in <think> tags
-        system_prompt = """You are a dramaturgical expert that creates diegetic artefacts for architectural projects.
-
-        IMPORTANT: In your response, first share your reasoning process within <think> tags. Use this format:
-        <think>
-        Here I analyze what would be most effective for this project...
-        </think>
-
-        Then provide your final output after the thinking section. The <think> section won't be visible to the end user unless they choose to see it."""
-
         return {
             "model": model_config["model"],
             "max_tokens": model_config["max_tokens"],
@@ -58,7 +42,7 @@ def prepare_request_data(
             "system": [
                 {
                     "type": "text",
-                    "text": system_prompt,
+                    "text": SYSTEM_PROMPT,
                     "cache_control": {"type": "ephemeral"}
                 }
             ],
@@ -69,24 +53,12 @@ def prepare_request_data(
                 }
             ]
         }
-    elif provider == 'ollama':
-        # Ollama uses a simpler format with a system prompt and messages
-        system_prompt = """You are a dramaturgical expert that creates diegetic artefacts for architectural projects.
 
-        IMPORTANT: In your response, first share your reasoning process within <think> tags. Use this format:
-        <think>
-        Here I analyze what would be most effective for this project...
-        </think>
-
-        Then provide your final output after the thinking section. The <think> section won't be visible to the end user unless they choose to see it."""
-
+    if provider == 'ollama':
         return {
             "model": model_config["model"],
             "messages": [
-                {
-                    "role": "system",
-                    "content": system_prompt
-                },
+                {"role": "system", "content": SYSTEM_PROMPT},
                 {
                     "role": "user",
                     "content": enhanced_prompt + "\n\nFirst explain your reasoning within <think> tags before creating the final artifact."
@@ -99,64 +71,28 @@ def prepare_request_data(
                 "num_predict": model_config["max_tokens"]
             }
         }
-    else:  # Default to OpenAI/Perplexity format
-        data = {
-            "model": model_config["model"],
-            "messages": [{
-                "role": "system",
-                "content": """You are a dramaturgical expert that creates diegetic artefacts for architectural projects.
 
-                IMPORTANT: Structure your response in exactly two parts:
-                1. First, a thinking section wrapped in <think> tags that explains your reasoning
-                2. Then, the final artifact output after a clear closing </think> tag
-
-                Example structure:
-                <think>
-                Your reasoning here...
-                </think>
-
-                Your final artifact here..."""
-            },
-            {
-                "role": "user",
-                "content": enhanced_prompt + "\n\nIMPORTANT: Begin with your reasoning in <think> tags, then close the tag with </think> before providing the final artifact."
-            }],
-            "max_tokens": calculate_max_tokens(project_description, user_bios, themes),
-            "temperature": model_config["temperature"],
-            "top_p": model_config.get("top_p", 0.9),
-            "presence_penalty": model_config.get("presence_penalty", 0.1)
-        }
-
-        return data
+    raise ValueError(f"Unsupported provider: {provider!r}. Supported: anthropic, ollama.")
 
 
 def extract_response(response: requests.Response, model_config: Dict[str, Any]) -> str:
     """Extract the response content based on the provider's response format"""
     provider = model_config.get('provider', '')
 
-    # Log the response structure to help with debugging
     response_json = response.json()
     logging.debug(f"Response keys: {list(response_json.keys())}")
 
     if provider == 'anthropic':
-        # Anthropic response structure
         try:
             return response_json['content'][0]['text']
         except (KeyError, IndexError) as e:
             logging.error(f"Error extracting Anthropic response: {str(e)}")
             logging.debug(f"Response content: {response_json}")
             return f"Error parsing response: {str(e)}"
-    elif provider == 'ollama':
-        # Ollama response structure
+
+    if provider == 'ollama':
         try:
             return response_json['message']['content']
-        except (KeyError, IndexError) as e:
-            logging.error(f"Error extracting Ollama response: {str(e)}")
-            logging.debug(f"Response content: {response_json}")
-            return f"Error parsing response: {str(e)}"
-    else:  # Default to OpenAI/Perplexity format
-        try:
-            return response_json['choices'][0]['message']['content']
         except (KeyError, IndexError) as e:
             logging.error(f"Error extracting response: {str(e)}")
             logging.debug(f"Response content: {response_json}")
@@ -193,27 +129,18 @@ def generate_artefact(
     Returns:
         Generated artefact content or error message
     """
-    # Get API key if required
     provider = model_config.get('provider', '')
-    api_key = None
-    if provider != 'ollama':  # Ollama doesn't require an API key
+    headers = model_config['headers'].copy()
+
+    if provider == 'anthropic':
         api_key = os.getenv(model_config['api_key_env'])
         if not api_key:
             return f"Error: {model_config['api_key_env']} not found in environment variables"
-
-    # Prepare headers
-    headers = model_config['headers'].copy()
-
-    # Handle provider-specific authorization formats
-    if provider == 'anthropic':
-        # Anthropic uses x-api-key instead of Authorization: Bearer
         headers["x-api-key"] = api_key
-    elif provider != 'ollama':  # Ollama doesn't require authorization
-        # Default Bearer format for other providers
-        headers["Authorization"] = f"Bearer {api_key}"
+    elif provider != 'ollama':
+        return f"Error: Unsupported provider {provider!r}. Supported: anthropic, ollama."
 
-    # Log which provider we're using
-    logging.info(f"Using provider: {provider if provider else 'default'}")
+    logging.info(f"Using provider: {provider}")
 
     # Get the selected artefact type
     artefact_type = selected_type['category']

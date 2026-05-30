@@ -1,7 +1,7 @@
 """Tests for file operations"""
 import pytest
 import os
-from datetime import datetime
+from utils import file_operations as file_ops_module
 from utils.file_operations import (
     sanitize_filename,
     save_artefact,
@@ -24,10 +24,9 @@ def test_sanitize_filename():
 
 def test_save_artefact(tmp_path, monkeypatch):
     """Test saving an artefact"""
-    # Change to temp directory
-    monkeypatch.chdir(tmp_path)
+    artefacts_dir = tmp_path / "artefacts"
+    monkeypatch.setattr(file_ops_module, "ARTEFACTS_DIR", artefacts_dir)
 
-    # Test data
     content = "Test artefact content"
     project = "Test Project"
     date = "2025"
@@ -40,18 +39,15 @@ def test_save_artefact(tmp_path, monkeypatch):
     }
     temperature = 0.7
 
-    # Save artefact
     filename = save_artefact(
         content, project, date, location,
         user_bios, themes, model_config, temperature
     )
 
-    # Verify file was created
     assert os.path.exists(filename)
-    assert filename.startswith("artefacts/")
     assert filename.endswith(".md")
+    assert str(artefacts_dir) in filename
 
-    # Verify content
     with open(filename, 'r') as f:
         saved_content = f.read()
 
@@ -63,7 +59,7 @@ def test_save_artefact(tmp_path, monkeypatch):
 
 def test_list_artefacts_empty(tmp_path, monkeypatch):
     """Test listing artefacts when directory is empty"""
-    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(file_ops_module, "ARTEFACTS_DIR", tmp_path / "artefacts")
 
     artefacts = list_artefacts()
 
@@ -73,10 +69,9 @@ def test_list_artefacts_empty(tmp_path, monkeypatch):
 
 def test_list_artefacts_with_files(tmp_path, monkeypatch):
     """Test listing artefacts with existing files"""
-    monkeypatch.chdir(tmp_path)
-
-    # Create some test artefacts
-    os.makedirs('artefacts', exist_ok=True)
+    artefacts_dir = tmp_path / "artefacts"
+    artefacts_dir.mkdir()
+    monkeypatch.setattr(file_ops_module, "ARTEFACTS_DIR", artefacts_dir)
 
     test_content = """<div class="generated-content">
 
@@ -104,13 +99,11 @@ Test content
 
 </div>"""
 
-    with open('artefacts/test1.md', 'w') as f:
-        f.write(test_content)
+    (artefacts_dir / "test1.md").write_text(test_content)
+    (artefacts_dir / "test2.md").write_text(
+        test_content.replace("Project 1", "Project 2")
+    )
 
-    with open('artefacts/test2.md', 'w') as f:
-        f.write(test_content.replace("Project 1", "Project 2"))
-
-    # List artefacts
     artefacts = list_artefacts()
 
     assert len(artefacts) == 2
@@ -120,20 +113,13 @@ Test content
     assert all('created' in a for a in artefacts)
 
 
-def test_load_artefact(tmp_path, monkeypatch):
+def test_load_artefact(tmp_path):
     """Test loading an artefact"""
-    monkeypatch.chdir(tmp_path)
-
-    # Create test file
-    os.makedirs('artefacts', exist_ok=True)
     test_content = "Test artefact content"
-    filepath = 'artefacts/test.md'
+    filepath = tmp_path / "test.md"
+    filepath.write_text(test_content)
 
-    with open(filepath, 'w') as f:
-        f.write(test_content)
-
-    # Load artefact
-    loaded_content = load_artefact(filepath)
+    loaded_content = load_artefact(str(filepath))
 
     assert loaded_content == test_content
 

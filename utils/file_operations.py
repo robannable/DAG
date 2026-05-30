@@ -3,7 +3,8 @@ import os
 import re
 from datetime import datetime
 from typing import Dict, List, Any
-import json
+
+from utils.config import ARTEFACTS_DIR
 
 
 def sanitize_filename(filename: str) -> str:
@@ -27,7 +28,7 @@ def save_artefact(
 ) -> str:
     """Save the artefact as a markdown file"""
     # Create artefacts directory if it doesn't exist
-    os.makedirs('artefacts', exist_ok=True)
+    os.makedirs(ARTEFACTS_DIR, exist_ok=True)
 
     # Clean up project description:
     # 1. Replace carriage returns/newlines with spaces
@@ -39,7 +40,7 @@ def save_artefact(
 
     # Create a sanitized filename
     base_filename = f"{timestamp}_{sanitize_filename(clean_description)}"
-    filename = f"artefacts/{base_filename}.md"
+    filename = str(ARTEFACTS_DIR / f"{base_filename}.md")
 
     # Get model information
     provider = model_config.get('provider', '')
@@ -85,12 +86,12 @@ def list_artefacts() -> List[Dict[str, Any]]:
     """List all saved artefacts with metadata"""
     artefacts = []
 
-    if not os.path.exists('artefacts'):
+    if not ARTEFACTS_DIR.exists():
         return artefacts
 
-    for filename in os.listdir('artefacts'):
+    for filename in os.listdir(ARTEFACTS_DIR):
         if filename.endswith('.md'):
-            filepath = os.path.join('artefacts', filename)
+            filepath = str(ARTEFACTS_DIR / filename)
             try:
                 # Get file stats
                 stats = os.stat(filepath)
@@ -138,3 +139,12 @@ def load_artefact(filepath: str) -> str:
             return f.read()
     except Exception as e:
         raise Exception(f"Error loading artefact: {str(e)}")
+
+
+def delete_artefact(filepath: str) -> None:
+    """Delete an artefact file. Restricted to files inside ARTEFACTS_DIR."""
+    resolved = os.path.realpath(filepath)
+    artefacts_root = os.path.realpath(ARTEFACTS_DIR)
+    if not resolved.startswith(artefacts_root + os.sep):
+        raise ValueError(f"Refusing to delete file outside artefacts dir: {filepath}")
+    os.remove(resolved)
