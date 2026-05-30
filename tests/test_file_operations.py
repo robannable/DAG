@@ -139,6 +139,29 @@ def test_save_then_list_roundtrip_tricky_content(tmp_path, monkeypatch):
     assert entry['model'] == "anthropic/claude-sonnet-4-6"
 
 
+def test_list_uses_metadata_timestamp_over_mtime(tmp_path, monkeypatch):
+    """'created' comes from the stored generation time, not file mtime"""
+    import os
+    from datetime import datetime
+
+    artefacts_dir = tmp_path / "artefacts"
+    monkeypatch.setattr(file_ops_module, "ARTEFACTS_DIR", artefacts_dir)
+
+    filename = save_artefact(
+        "body", "Project", "2030", "Location", "u", "t",
+        {"provider": "anthropic", "model": "claude-sonnet-4-6"}, 0.7
+    )
+
+    # Force the file's mtime far into the past; the listing should ignore it
+    # in favour of the 'generated' timestamp recorded at save time (~now).
+    old = datetime(2000, 1, 1).timestamp()
+    os.utime(filename, (old, old))
+
+    entry = list_artefacts()[0]
+    assert entry['created'].year != 2000
+    assert abs((datetime.now() - entry['created']).total_seconds()) < 120
+
+
 def test_delete_artefact_removes_file(tmp_path, monkeypatch):
     """delete_artefact removes a file inside the artefacts dir"""
     artefacts_dir = tmp_path / "artefacts"

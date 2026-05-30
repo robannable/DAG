@@ -150,9 +150,7 @@ def list_artefacts() -> List[Dict[str, Any]]:
         if filename.endswith('.md'):
             filepath = str(ARTEFACTS_DIR / filename)
             try:
-                # Get file stats
                 stats = os.stat(filepath)
-                created = datetime.fromtimestamp(stats.st_mtime)
 
                 with open(filepath, 'r', encoding='utf-8') as f:
                     content = f.read()
@@ -161,6 +159,16 @@ def list_artefacts() -> List[Dict[str, Any]]:
                 project = meta.get('project', "Unknown Project")
                 location = meta.get('location', "Unknown Location")
                 model = meta.get('model', "Unknown")
+
+                # Prefer the recorded generation time; fall back to file
+                # mtime for legacy artefacts or an unparseable value.
+                created = datetime.fromtimestamp(stats.st_mtime)
+                generated = meta.get('generated')
+                if generated:
+                    try:
+                        created = datetime.fromisoformat(generated)
+                    except (ValueError, TypeError):
+                        pass
 
                 artefacts.append({
                     'filename': filename,
