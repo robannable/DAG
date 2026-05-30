@@ -179,7 +179,7 @@ Additional creative guidance: {closing_instruction}"""
         logging.debug(f"Response status code: {response.status_code}")
 
         if response.status_code != 200:
-            error_message = f"API Error: {response.status_code} - {response.text}"
+            error_message = f"Error: API request failed (HTTP {response.status_code}) - {response.text}"
             logging.error(error_message)
             return error_message
 
