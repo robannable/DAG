@@ -42,7 +42,7 @@ def prepare_request_data(
 
     if provider == 'anthropic':
         # Custom system prompt for Anthropic that requests thinking in <think> tags
-        system_prompt = """You are a dramatalurgical expert that creates diegetic artefacts for architectural projects.
+        system_prompt = """You are a dramaturgical expert that creates diegetic artefacts for architectural projects.
 
         IMPORTANT: In your response, first share your reasoning process within <think> tags. Use this format:
         <think>
@@ -55,7 +55,13 @@ def prepare_request_data(
             "model": model_config["model"],
             "max_tokens": model_config["max_tokens"],
             "temperature": model_config["temperature"],
-            "system": system_prompt,
+            "system": [
+                {
+                    "type": "text",
+                    "text": system_prompt,
+                    "cache_control": {"type": "ephemeral"}
+                }
+            ],
             "messages": [
                 {
                     "role": "user",
@@ -65,7 +71,7 @@ def prepare_request_data(
         }
     elif provider == 'ollama':
         # Ollama uses a simpler format with a system prompt and messages
-        system_prompt = """You are a dramatalurgical expert that creates diegetic artefacts for architectural projects.
+        system_prompt = """You are a dramaturgical expert that creates diegetic artefacts for architectural projects.
 
         IMPORTANT: In your response, first share your reasoning process within <think> tags. Use this format:
         <think>
@@ -98,7 +104,7 @@ def prepare_request_data(
             "model": model_config["model"],
             "messages": [{
                 "role": "system",
-                "content": """You are a dramatalurgical expert that creates diegetic artefacts for architectural projects.
+                "content": """You are a dramaturgical expert that creates diegetic artefacts for architectural projects.
 
                 IMPORTANT: Structure your response in exactly two parts:
                 1. First, a thinking section wrapped in <think> tags that explains your reasoning
@@ -213,7 +219,7 @@ def generate_artefact(
     artefact_type = selected_type['category']
 
     # Build the prompt
-    prompt = f"""You are a dramatalurgical expert that creates diegetic artefacts for architectural projects.
+    prompt = f"""You are a dramaturgical expert that creates diegetic artefacts for architectural projects.
     Your task is to imagine and create a specific diegetic artefact within the category of '{artefact_type}' that exists within the narrative world of this project.
     First, decide on an appropriate specific artefact type within this category that would be meaningful for this project.
 

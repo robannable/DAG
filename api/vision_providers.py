@@ -29,7 +29,7 @@ def prepare_vision_request_anthropic(
         model_config["temperature"] = temperature
 
     # Build system prompt
-    system_prompt = """You are a dramatalurgical expert that creates diegetic artefacts for architectural projects.
+    system_prompt = """You are a dramaturgical expert that creates diegetic artefacts for architectural projects.
 
 You have been provided with visual materials (sketches, diagrams, photographs, or reference images) along with text descriptions.
 
@@ -74,7 +74,13 @@ Remember to:
         "model": model_config["model"],
         "max_tokens": model_config["max_tokens"],
         "temperature": model_config["temperature"],
-        "system": system_prompt,
+        "system": [
+            {
+                "type": "text",
+                "text": system_prompt,
+                "cache_control": {"type": "ephemeral"}
+            }
+        ],
         "messages": [
             {
                 "role": "user",

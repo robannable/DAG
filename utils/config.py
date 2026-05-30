@@ -41,7 +41,7 @@ def load_model_config() -> Dict[str, Any]:
         logging.error(f"Error loading model configuration: {str(e)}")
         # Return default configuration
         return {
-            "model": "claude-sonnet-4-20250514",
+            "model": "claude-sonnet-4-6",
             "max_tokens": 4000,
             "temperature": 0.7,
             "top_p": 0.9,
