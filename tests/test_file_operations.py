@@ -6,7 +6,8 @@ from utils.file_operations import (
     sanitize_filename,
     save_artefact,
     list_artefacts,
-    load_artefact
+    load_artefact,
+    delete_artefact
 )
 
 
@@ -68,7 +69,7 @@ def test_list_artefacts_empty(tmp_path, monkeypatch):
 
 
 def test_list_artefacts_with_files(tmp_path, monkeypatch):
-    """Test listing artefacts with existing files"""
+    """Legacy fallback: files without a metadata block parse via section headers"""
     artefacts_dir = tmp_path / "artefacts"
     artefacts_dir.mkdir()
     monkeypatch.setattr(file_ops_module, "ARTEFACTS_DIR", artefacts_dir)
@@ -111,6 +112,58 @@ Test content
     assert all('project' in a for a in artefacts)
     assert all('location' in a for a in artefacts)
     assert all('created' in a for a in artefacts)
+
+
+def test_save_then_list_roundtrip_tricky_content(tmp_path, monkeypatch):
+    """Metadata survives content that broke the old regex parser"""
+    artefacts_dir = tmp_path / "artefacts"
+    monkeypatch.setattr(file_ops_module, "ARTEFACTS_DIR", artefacts_dir)
+
+    # Project text packed with characters that defeated the legacy regex:
+    # blank lines, an HTML-comment terminator, JSON braces, quotes, unicode.
+    project = 'Línea Verde\n\n--> {"weird": "value"}\n\nfollow-up paragraph'
+    location = "Bilbao, España"
+
+    save_artefact(
+        "Artefact body", project, "2030", location,
+        "Personas", "Themes",
+        {"provider": "anthropic", "model": "claude-sonnet-4-6"}, 0.7
+    )
+
+    artefacts = list_artefacts()
+    assert len(artefacts) == 1
+    entry = artefacts[0]
+    # Project is truncated to 100 chars in the listing; compare on that basis
+    assert entry['project'] == project[:100]
+    assert entry['location'] == location[:50]
+    assert entry['model'] == "anthropic/claude-sonnet-4-6"
+
+
+def test_delete_artefact_removes_file(tmp_path, monkeypatch):
+    """delete_artefact removes a file inside the artefacts dir"""
+    artefacts_dir = tmp_path / "artefacts"
+    artefacts_dir.mkdir()
+    monkeypatch.setattr(file_ops_module, "ARTEFACTS_DIR", artefacts_dir)
+
+    target = artefacts_dir / "victim.md"
+    target.write_text("content")
+
+    delete_artefact(str(target))
+    assert not target.exists()
+
+
+def test_delete_artefact_rejects_outside_dir(tmp_path, monkeypatch):
+    """delete_artefact refuses paths outside the artefacts dir"""
+    artefacts_dir = tmp_path / "artefacts"
+    artefacts_dir.mkdir()
+    monkeypatch.setattr(file_ops_module, "ARTEFACTS_DIR", artefacts_dir)
+
+    outsider = tmp_path / "important.txt"
+    outsider.write_text("do not delete")
+
+    with pytest.raises(ValueError, match="outside artefacts dir"):
+        delete_artefact(str(outsider))
+    assert outsider.exists()
 
 
 def test_load_artefact(tmp_path):

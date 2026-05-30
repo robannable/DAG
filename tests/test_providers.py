@@ -16,13 +16,7 @@ def test_prepare_request_data_anthropic():
         "temperature": 0.7
     }
 
-    data = prepare_request_data(
-        "Test prompt",
-        model_config,
-        "project",
-        "bio",
-        "themes"
-    )
+    data = prepare_request_data("Test prompt", model_config)
 
     assert data["model"] == "claude-sonnet-4"
     assert data["max_tokens"] == 4000
@@ -33,6 +27,8 @@ def test_prepare_request_data_anthropic():
     assert "messages" in data
     assert len(data["messages"]) == 1
     assert data["messages"][0]["role"] == "user"
+    # Dynamic prompt is passed through verbatim; static text stays in system
+    assert data["messages"][0]["content"] == "Test prompt"
 
 
 def test_prepare_request_data_ollama():
@@ -44,19 +40,16 @@ def test_prepare_request_data_ollama():
         "temperature": 0.7
     }
 
-    data = prepare_request_data(
-        "Test prompt",
-        model_config,
-        "project",
-        "bio",
-        "themes"
-    )
+    data = prepare_request_data("Test prompt", model_config)
 
     assert data["model"] == "llama3.1"
     assert data["stream"] is False
     assert "messages" in data
     assert "options" in data
     assert data["options"]["temperature"] == 0.7
+    # System carries the static scaffolding, user carries the dynamic prompt
+    assert data["messages"][0]["role"] == "system"
+    assert data["messages"][1]["content"] == "Test prompt"
 
 
 def test_prepare_request_data_unsupported_provider():
@@ -69,9 +62,7 @@ def test_prepare_request_data_unsupported_provider():
     }
 
     with pytest.raises(ValueError, match="Unsupported provider"):
-        prepare_request_data(
-            "Test prompt", model_config, "project", "bio", "themes"
-        )
+        prepare_request_data("Test prompt", model_config)
 
 
 def test_prepare_request_data_with_custom_temperature():
@@ -83,14 +74,7 @@ def test_prepare_request_data_with_custom_temperature():
         "temperature": 0.7
     }
 
-    data = prepare_request_data(
-        "Test prompt",
-        model_config,
-        "project",
-        "bio",
-        "themes",
-        temperature=0.5
-    )
+    data = prepare_request_data("Test prompt", model_config, temperature=0.5)
 
     assert data["temperature"] == 0.5
 

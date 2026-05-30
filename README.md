@@ -386,7 +386,7 @@ Special thanks to **Justin Pickard** for his role as agitator, critical friend, 
 
 ## Questions?
 
-- **Installation issues**: Check Python version (3.8+), virtual environment setup
+- **Installation issues**: Check Python version (3.9+), virtual environment setup
 - **API errors**: Verify API keys in `.env`, check rate limits
 - **Vision not working**: Run `python test_vision_api.py` to diagnose
 - **General questions**: Open an issue on GitHub

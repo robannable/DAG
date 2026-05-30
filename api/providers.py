@@ -6,33 +6,54 @@ import requests
 from api.retry import make_api_request_with_retry, RetryConfig
 
 
+# All static instruction scaffolding lives here so it forms a single,
+# byte-identical prefix on every request. For Anthropic it is sent as a
+# cache_control system block; the per-call user message carries only the
+# dynamic project details. (Note: Anthropic only caches prefixes of >=1024
+# tokens, which this prompt is currently under, so caching is wired but
+# dormant until the static prompt grows past that threshold.)
 SYSTEM_PROMPT = """You are a dramaturgical expert that creates diegetic artefacts for architectural projects.
 
-IMPORTANT: In your response, first share your reasoning process within <think> tags. Use this format:
+Your task is to imagine and create a specific diegetic artefact within a given category that exists within the narrative world of a project. First, decide on an appropriate specific artefact type within that category that would be meaningful for the project.
+
+Structure every response in this order:
+
+1. First, share your reasoning within <think> tags, like this:
 <think>
 Here I analyze what would be most effective for this project...
 </think>
+The <think> section will not be visible to the end user unless they choose to see it.
 
-Then provide your final output after the thinking section. The <think> section won't be visible to the end user unless they choose to see it."""
+2. Briefly explain (100-150 words) your choice of specific artefact within the given category.
+3. Add a brief summary (2-3 sentences) of how this artefact relates to the project's themes and context.
+4. Pose 2-3 thought-provoking questions for the user about the relationship between this artefact and the architecture project.
+5. Finally, create the diegetic artefact itself (500-750 words) in an appropriate format and style, using markdown so it is visibly distinct.
+
+Markdown formatting guidelines:
+- Use proper heading hierarchy (# for main title, ## for sections, ### for subsections)
+- Format emphasis appropriately (* for italic, ** for bold)
+- Use proper list formatting (- for unordered lists, 1. for ordered lists)
+- Include line breaks between paragraphs for readability
+- Use horizontal rules (---) to separate major sections
+
+Put the most important parts first and conclude with a proper ending so the artefact is complete and never cut off."""
 
 
 def prepare_request_data(
     prompt: str,
     model_config: Dict[str, Any],
-    project_description: str,
-    user_bios: str,
-    themes: str,
     temperature: Optional[float] = None
 ) -> Dict[str, Any]:
-    """Prepare the request data for the active provider (anthropic or ollama)"""
+    """Wrap a fully-built user prompt in the provider's request shape.
+
+    The static instructions live in SYSTEM_PROMPT; ``prompt`` is expected to
+    contain only the dynamic, per-request content.
+    """
     if temperature is not None:
         model_config = model_config.copy()
         model_config["temperature"] = temperature
 
     provider = model_config.get('provider', '')
-
-    safe_tokens = int(model_config["max_tokens"] * 0.9)
-    enhanced_prompt = prompt + f"\n\nYour response should be complete and no longer than approximately {safe_tokens} tokens."
 
     if provider == 'anthropic':
         return {
@@ -47,10 +68,7 @@ def prepare_request_data(
                 }
             ],
             "messages": [
-                {
-                    "role": "user",
-                    "content": enhanced_prompt + "\n\nIMPORTANT: First explain your reasoning within <think> tags before creating the final artifact. This thinking will help me understand your creative process."
-                }
+                {"role": "user", "content": prompt}
             ]
         }
 
@@ -59,10 +77,7 @@ def prepare_request_data(
             "model": model_config["model"],
             "messages": [
                 {"role": "system", "content": SYSTEM_PROMPT},
-                {
-                    "role": "user",
-                    "content": enhanced_prompt + "\n\nFirst explain your reasoning within <think> tags before creating the final artifact."
-                }
+                {"role": "user", "content": prompt}
             ],
             "stream": False,
             "options": {
@@ -145,41 +160,24 @@ def generate_artefact(
     # Get the selected artefact type
     artefact_type = selected_type['category']
 
-    # Build the prompt
-    prompt = f"""You are a dramaturgical expert that creates diegetic artefacts for architectural projects.
-    Your task is to imagine and create a specific diegetic artefact within the category of '{artefact_type}' that exists within the narrative world of this project.
-    First, decide on an appropriate specific artefact type within this category that would be meaningful for this project.
+    # Build the dynamic, per-request prompt. All static instructions live in
+    # SYSTEM_PROMPT, so this carries only project details and the budget.
+    safe_tokens = int(model_config["max_tokens"] * 0.9)
+    prompt = f"""Project Information:
+Description: {project_description}
+Location: {location}
+Date/Timeframe: {date}
+User Personas: {user_bios}
+Key Themes: {themes}
 
-    Project Information:
-    Description: {project_description}
-    Location: {location}
-    Date/Timeframe: {date}
-    User Personas: {user_bios}
-    Key Themes: {themes}
+Artefact Category: {artefact_type}
 
-    Instructions:
-    1. Begin by briefly explaining (100-150 words) your choice of specific artefact within the {artefact_type} category.
-    2. Add a brief summary (2-3 sentences) explaining how this artefact relates to the project's themes and context.
-    3. Pose 2-3 thought-provoking questions for the user to consider about the relationship between this artefact and the architecture project.
-    4. Finally, create the diegetic artefact itself (500-750 words) in the appropriate format and style using markdown syntax to ensure it is visibly distinct. Refer to {closing_instruction} for additional abductive thinking opportunities. Ensure content is not truncated by the target word count and token limit. Rewrite to avoid this if necessary.
+Additional creative guidance: {closing_instruction}
 
-    Markdown Formatting Guidelines:
-    - Use proper heading hierarchy (# for main title, ## for sections, ### for subsections)
-    - Format emphasis appropriately (* for italic, ** for bold)
-    - Use proper list formatting (- for unordered lists, 1. for ordered lists)
-    - Include line breaks between paragraphs for readability
-    - Use horizontal rules (---) to separate major sections
-
-    IMPORTANT: Your entire response must fit within {model_config["max_tokens"]} tokens.
-    Structure your response to ensure your artefact is complete and not cut off.
-    The most important parts should come first, and conclude with a proper ending.
-
-    Begin your response:"""
+Keep your entire response within approximately {safe_tokens} tokens, and make sure the artefact is complete and not cut off."""
 
     # Prepare request data based on provider
-    data = prepare_request_data(
-        prompt, model_config, project_description, user_bios, themes, temperature
-    )
+    data = prepare_request_data(prompt, model_config, temperature)
 
     # Log request information (without sensitive data)
     logging.debug(f"Sending request to: {model_config['api_endpoint']}")
