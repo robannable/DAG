@@ -30,6 +30,7 @@ def test_prepare_vision_request_anthropic():
 
     assert data["model"] == "claude-sonnet-4"
     assert data["max_tokens"] == 4000
+    assert data["stream"] is True
     assert "system" in data
     assert "messages" in data
     assert len(data["messages"]) == 1

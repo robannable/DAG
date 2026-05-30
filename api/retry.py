@@ -114,3 +114,51 @@ def make_api_request_with_retry(
         return response
 
     return retry_with_exponential_backoff(_make_request, config)
+
+
+def make_streaming_request_with_retry(
+    url: str,
+    headers: dict,
+    data: dict,
+    config: Optional[RetryConfig] = None,
+    timeout: int = 60
+) -> requests.Response:
+    """
+    Make a streaming API POST request with retry logic.
+
+    Returns the response with the body left unread (stream=True), so the
+    caller can iterate it incrementally. With streaming the ``timeout`` is the
+    maximum gap allowed between chunks, not the total generation time, so long
+    completions no longer trip a read timeout.
+
+    Retries only cover establishing the connection and the initial status
+    line; once a 200 stream has started it is consumed by the caller.
+
+    Args:
+        url: The API endpoint URL
+        headers: Request headers
+        data: Request payload (should request streaming, e.g. "stream": True)
+        config: Retry configuration
+        timeout: Per-read (inter-chunk) timeout in seconds
+
+    Returns:
+        Response object with an unread, streamable body
+
+    Raises:
+        requests.exceptions.RequestException: If all retries fail
+    """
+
+    def _make_request():
+        response = requests.post(
+            url, headers=headers, json=data, timeout=timeout, stream=True
+        )
+        # Only retry on specific status codes (server errors, rate limits)
+        if response.status_code in [429, 500, 502, 503, 504]:
+            logging.warning(f"Received status code {response.status_code}, will retry")
+            response.close()
+            raise requests.exceptions.RequestException(
+                f"Server returned {response.status_code}"
+            )
+        return response
+
+    return retry_with_exponential_backoff(_make_request, config)
