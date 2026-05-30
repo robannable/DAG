@@ -68,8 +68,7 @@ def display_image_previews(uploaded_files: List) -> None:
         col_idx = idx % cols_per_row
 
         with cols[col_idx]:
-            # Display image (use_column_width for backwards compatibility)
-            st.image(uploaded_file, caption=uploaded_file.name, use_column_width=True)
+            st.image(uploaded_file, caption=uploaded_file.name, width="stretch")
 
             # Display file info
             file_size_kb = uploaded_file.size / 1024
@@ -136,24 +135,29 @@ Claude will analyze your images and incorporate visual insights into the artifac
 
 def extract_think_content(response: str) -> tuple:
     """
-    Extract thinking/analysis content from response
+    Extract thinking/analysis content from response.
 
-    Args:
-        response: Full response with <think> tags
-
-    Returns:
-        Tuple of (artifact_content, think_content)
+    Handles three cases:
+    - Well-formed <think>...</think>: extract think, strip from body
+    - Unclosed <think> (truncated response): treat everything after the
+      opening tag as think content so the user sees a clearly empty
+      artifact body rather than a leaked raw tag
+    - No tags at all: return response unchanged
     """
     import re
 
-    # Try to extract think tags
     think_pattern = r'<think>(.*?)</think>'
     think_match = re.search(think_pattern, response, re.DOTALL)
 
     if think_match:
         think_content = think_match.group(1).strip()
-        # Remove think tags from main content
         artifact_content = re.sub(think_pattern, '', response, flags=re.DOTALL).strip()
         return artifact_content, think_content
-    else:
-        return response, None
+
+    if '<think>' in response:
+        idx = response.index('<think>')
+        artifact_content = response[:idx].strip()
+        think_content = response[idx + len('<think>'):].strip()
+        return artifact_content, think_content
+
+    return response, None

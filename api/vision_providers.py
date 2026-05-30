@@ -6,6 +6,30 @@ import requests
 from api.retry import make_api_request_with_retry, RetryConfig
 
 
+# Static instruction scaffolding for the vision path. Kept as a single
+# constant so it forms a byte-identical cache_control prefix on every request;
+# the per-call user message carries only the images and dynamic project text.
+VISION_SYSTEM_PROMPT = """You are a dramaturgical expert that creates diegetic artefacts for architectural projects.
+
+You will be provided with visual materials (sketches, diagrams, photographs, or reference images) along with text descriptions.
+
+Structure every response in this order:
+
+1. First, carefully analyze the provided images and share that analysis within <think> tags. Consider:
+   - Spatial organization, layout, and relationships
+   - Annotations, labels, or handwritten notes (OCR)
+   - Material indications and aesthetic qualities
+   - Scale, proportion, and atmospheric intentions
+   - Site context and environmental factors
+   - Any diagrams or visual information systems
+The <think> section will not be visible to the end user unless they choose to see it.
+
+2. Explain (100-150 words) your choice of specific artefact within the given category, informed by both visuals and text.
+3. Summarize (2-3 sentences) how this artefact relates to the project's themes and visual context.
+4. Pose 2-3 thought-provoking questions about the relationship between this artefact and the architecture project.
+5. Create the diegetic artefact itself (500-750 words) using markdown. Reference specific elements you observed in the visual materials (spaces, annotations, materials, dimensions) so the artefact feels grounded in the actual visual context rather than generic assumptions."""
+
+
 def prepare_vision_request_anthropic(
     text_prompt: str,
     images: List[dict],
@@ -16,7 +40,8 @@ def prepare_vision_request_anthropic(
     Prepare vision request for Anthropic Claude
 
     Args:
-        text_prompt: Text prompt
+        text_prompt: Dynamic, per-request project text (static instructions
+            live in VISION_SYSTEM_PROMPT)
         images: List of image data with base64 and media_type
         model_config: Model configuration
         temperature: Optional temperature override
@@ -28,26 +53,10 @@ def prepare_vision_request_anthropic(
         model_config = model_config.copy()
         model_config["temperature"] = temperature
 
-    # Build system prompt
-    system_prompt = """You are a dramatalurgical expert that creates diegetic artefacts for architectural projects.
-
-You have been provided with visual materials (sketches, diagrams, photographs, or reference images) along with text descriptions.
-
-IMPORTANT: First, carefully analyze the provided images:
-1. Spatial organization, layout, and relationships
-2. Annotations, labels, or handwritten notes (OCR)
-3. Material indications and aesthetic qualities
-4. Scale, proportion, and atmospheric intentions
-5. Site context and environmental factors
-6. Any diagrams or visual information systems
-
-Then share your visual analysis within <think> tags before creating the final artifact."""
-
-    # Build content array with images and text
+    # Build content array: images first, then the dynamic text prompt
     content = []
 
-    # Add images first
-    for idx, img in enumerate(images):
+    for img in images:
         content.append({
             "type": "image",
             "source": {
@@ -57,24 +66,23 @@ Then share your visual analysis within <think> tags before creating the final ar
             }
         })
 
-    # Add text prompt
     content.append({
         "type": "text",
-        "text": f"""Please analyze the {len(images)} image(s) I've shared above, then use that visual context along with this project description to create a diegetic artifact:
-
-{text_prompt}
-
-Remember to:
-1. First explain your interpretation of the visual materials in <think> tags
-2. Reference specific visual elements you observe (spaces, annotations, materials, etc.)
-3. Then create the artifact that reflects both visual and textual context"""
+        "text": f"Please analyze the {len(images)} image(s) shared above and use that "
+                f"visual context together with the project details below.\n\n{text_prompt}"
     })
 
     return {
         "model": model_config["model"],
         "max_tokens": model_config["max_tokens"],
         "temperature": model_config["temperature"],
-        "system": system_prompt,
+        "system": [
+            {
+                "type": "text",
+                "text": VISION_SYSTEM_PROMPT,
+                "cache_control": {"type": "ephemeral"}
+            }
+        ],
         "messages": [
             {
                 "role": "user",
@@ -134,7 +142,8 @@ def generate_artefact_with_vision(
     # Log
     logging.info(f"Using Anthropic Claude vision with {len(images)} image(s)")
 
-    # Build the text prompt
+    # Build the dynamic text prompt (static instructions live in
+    # VISION_SYSTEM_PROMPT; this carries only per-request project details).
     artefact_type = selected_type['category']
 
     text_prompt = f"""Project Information:
@@ -144,16 +153,9 @@ Date/Timeframe: {date}
 User Personas: {user_bios}
 Key Themes: {themes}
 
-Artifact Category: {artefact_type}
+Artefact Category: {artefact_type}
 
-Instructions:
-1. Analyze the visual materials I've shared - what spatial, material, and contextual information do they convey?
-2. Explain (100-150 words) your choice of specific artefact within the {artefact_type} category, informed by both visuals and text.
-3. Summarize (2-3 sentences) how this artefact relates to the project's themes and visual context.
-4. Pose 2-3 thought-provoking questions about the relationship between this artefact and the architecture project.
-5. Create the diegetic artefact itself (500-750 words) using markdown. Reference specific elements from the visual materials. {closing_instruction}
-
-The artifact should feel grounded in the actual visual context you've seen, not generic assumptions."""
+Additional creative guidance: {closing_instruction}"""
 
     # Prepare request for Anthropic
     data = prepare_vision_request_anthropic(

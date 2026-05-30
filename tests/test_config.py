@@ -1,7 +1,7 @@
 """Tests for configuration utilities"""
 import pytest
 import json
-import os
+from utils import config as config_module
 from utils.config import (
     load_artefact_categories,
     load_prompt_instructions,
@@ -43,7 +43,6 @@ def test_load_model_config():
 
 def test_save_model_config(tmp_path, monkeypatch):
     """Test saving model configuration"""
-    # Create a temporary config file
     config_file = tmp_path / "model_config.json"
     test_config = {
         "current_provider": "anthropic",
@@ -56,13 +55,10 @@ def test_save_model_config(tmp_path, monkeypatch):
     with open(config_file, 'w') as f:
         json.dump(test_config, f)
 
-    # Monkeypatch to use temp file
-    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(config_module, "MODEL_CONFIG_PATH", config_file)
 
-    # Save new provider
     save_model_config("ollama")
 
-    # Verify it was saved
     with open(config_file, 'r') as f:
         saved_config = json.load(f)
 
@@ -71,7 +67,6 @@ def test_save_model_config(tmp_path, monkeypatch):
 
 def test_update_ollama_model(tmp_path, monkeypatch):
     """Test updating Ollama model"""
-    # Create a temporary config file
     config_file = tmp_path / "model_config.json"
     test_config = {
         "current_provider": "ollama",
@@ -84,13 +79,10 @@ def test_update_ollama_model(tmp_path, monkeypatch):
     with open(config_file, 'w') as f:
         json.dump(test_config, f)
 
-    # Monkeypatch to use temp file
-    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(config_module, "MODEL_CONFIG_PATH", config_file)
 
-    # Update model
     update_ollama_model("new-model")
 
-    # Verify it was updated
     with open(config_file, 'r') as f:
         saved_config = json.load(f)
 
@@ -99,10 +91,10 @@ def test_update_ollama_model(tmp_path, monkeypatch):
 
 def test_load_model_config_with_missing_file(tmp_path, monkeypatch):
     """Test that load_model_config returns default when file is missing"""
-    # Change to empty directory
-    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(
+        config_module, "MODEL_CONFIG_PATH", tmp_path / "missing.json"
+    )
 
-    # Should return default config without crashing
     config = load_model_config()
 
     assert isinstance(config, dict)

@@ -3,12 +3,11 @@
     "providers": {
         "anthropic": {
             "provider": "anthropic",
-            "model": "claude-sonnet-4-20250514",
+            "model": "claude-sonnet-4-6",
             "max_tokens": 4000,
             "temperature": 0.7,
             "top_p": 0.9,
             "presence_penalty": 0.1,
-            "message_retention": "no_retention",
             "api_endpoint": "https://api.anthropic.com/v1/messages",
             "api_key_env": "ANTHROPIC_API_KEY",
             "headers": {
@@ -18,11 +17,11 @@
         },
         "ollama": {
             "provider": "ollama",
-            "model": "Llama3.1:latest",
+            "model": "llama3.1:latest",
             "max_tokens": 4000,
             "temperature": 0.7,
             "top_p": 0.9,
-            "api_endpoint": "http://localhost:11434/api/generate",
+            "api_endpoint": "http://localhost:11434/api/chat",
             "headers": {
                 "Content-Type": "application/json"
             }

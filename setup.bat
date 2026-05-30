@@ -16,10 +16,8 @@ pip install -r requirements.txt
 :: Check if .env file exists and create if not
 if not exist .env (
     echo Creating .env file...
-    echo PERPLEXITY_API_KEY=your_api_key_here > .env
-    echo OPENAI_API_KEY=your_api_key_here >> .env
-    echo ANTHROPIC_API_KEY=your_api_key_here >> .env
-    echo Please edit .env file with your API keys
+    echo ANTHROPIC_API_KEY=your_api_key_here > .env
+    echo Please edit .env file with your Anthropic API key
 )
 
 echo Setup complete! To run the application:

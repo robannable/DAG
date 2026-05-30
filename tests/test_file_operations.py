@@ -1,12 +1,13 @@
 """Tests for file operations"""
 import pytest
 import os
-from datetime import datetime
+from utils import file_operations as file_ops_module
 from utils.file_operations import (
     sanitize_filename,
     save_artefact,
     list_artefacts,
-    load_artefact
+    load_artefact,
+    delete_artefact
 )
 
 
@@ -24,10 +25,9 @@ def test_sanitize_filename():
 
 def test_save_artefact(tmp_path, monkeypatch):
     """Test saving an artefact"""
-    # Change to temp directory
-    monkeypatch.chdir(tmp_path)
+    artefacts_dir = tmp_path / "artefacts"
+    monkeypatch.setattr(file_ops_module, "ARTEFACTS_DIR", artefacts_dir)
 
-    # Test data
     content = "Test artefact content"
     project = "Test Project"
     date = "2025"
@@ -40,18 +40,15 @@ def test_save_artefact(tmp_path, monkeypatch):
     }
     temperature = 0.7
 
-    # Save artefact
     filename = save_artefact(
         content, project, date, location,
         user_bios, themes, model_config, temperature
     )
 
-    # Verify file was created
     assert os.path.exists(filename)
-    assert filename.startswith("artefacts/")
     assert filename.endswith(".md")
+    assert str(artefacts_dir) in filename
 
-    # Verify content
     with open(filename, 'r') as f:
         saved_content = f.read()
 
@@ -63,7 +60,7 @@ def test_save_artefact(tmp_path, monkeypatch):
 
 def test_list_artefacts_empty(tmp_path, monkeypatch):
     """Test listing artefacts when directory is empty"""
-    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(file_ops_module, "ARTEFACTS_DIR", tmp_path / "artefacts")
 
     artefacts = list_artefacts()
 
@@ -72,11 +69,10 @@ def test_list_artefacts_empty(tmp_path, monkeypatch):
 
 
 def test_list_artefacts_with_files(tmp_path, monkeypatch):
-    """Test listing artefacts with existing files"""
-    monkeypatch.chdir(tmp_path)
-
-    # Create some test artefacts
-    os.makedirs('artefacts', exist_ok=True)
+    """Legacy fallback: files without a metadata block parse via section headers"""
+    artefacts_dir = tmp_path / "artefacts"
+    artefacts_dir.mkdir()
+    monkeypatch.setattr(file_ops_module, "ARTEFACTS_DIR", artefacts_dir)
 
     test_content = """<div class="generated-content">
 
@@ -104,13 +100,11 @@ Test content
 
 </div>"""
 
-    with open('artefacts/test1.md', 'w') as f:
-        f.write(test_content)
+    (artefacts_dir / "test1.md").write_text(test_content)
+    (artefacts_dir / "test2.md").write_text(
+        test_content.replace("Project 1", "Project 2")
+    )
 
-    with open('artefacts/test2.md', 'w') as f:
-        f.write(test_content.replace("Project 1", "Project 2"))
-
-    # List artefacts
     artefacts = list_artefacts()
 
     assert len(artefacts) == 2
@@ -120,20 +114,88 @@ Test content
     assert all('created' in a for a in artefacts)
 
 
-def test_load_artefact(tmp_path, monkeypatch):
+def test_save_then_list_roundtrip_tricky_content(tmp_path, monkeypatch):
+    """Metadata survives content that broke the old regex parser"""
+    artefacts_dir = tmp_path / "artefacts"
+    monkeypatch.setattr(file_ops_module, "ARTEFACTS_DIR", artefacts_dir)
+
+    # Project text packed with characters that defeated the legacy regex:
+    # blank lines, an HTML-comment terminator, JSON braces, quotes, unicode.
+    project = 'Línea Verde\n\n--> {"weird": "value"}\n\nfollow-up paragraph'
+    location = "Bilbao, España"
+
+    save_artefact(
+        "Artefact body", project, "2030", location,
+        "Personas", "Themes",
+        {"provider": "anthropic", "model": "claude-sonnet-4-6"}, 0.7
+    )
+
+    artefacts = list_artefacts()
+    assert len(artefacts) == 1
+    entry = artefacts[0]
+    # Project is truncated to 100 chars in the listing; compare on that basis
+    assert entry['project'] == project[:100]
+    assert entry['location'] == location[:50]
+    assert entry['model'] == "anthropic/claude-sonnet-4-6"
+
+
+def test_list_uses_metadata_timestamp_over_mtime(tmp_path, monkeypatch):
+    """'created' comes from the stored generation time, not file mtime"""
+    import os
+    from datetime import datetime
+
+    artefacts_dir = tmp_path / "artefacts"
+    monkeypatch.setattr(file_ops_module, "ARTEFACTS_DIR", artefacts_dir)
+
+    filename = save_artefact(
+        "body", "Project", "2030", "Location", "u", "t",
+        {"provider": "anthropic", "model": "claude-sonnet-4-6"}, 0.7
+    )
+
+    # Force the file's mtime far into the past; the listing should ignore it
+    # in favour of the 'generated' timestamp recorded at save time (~now).
+    old = datetime(2000, 1, 1).timestamp()
+    os.utime(filename, (old, old))
+
+    entry = list_artefacts()[0]
+    assert entry['created'].year != 2000
+    assert abs((datetime.now() - entry['created']).total_seconds()) < 120
+
+
+def test_delete_artefact_removes_file(tmp_path, monkeypatch):
+    """delete_artefact removes a file inside the artefacts dir"""
+    artefacts_dir = tmp_path / "artefacts"
+    artefacts_dir.mkdir()
+    monkeypatch.setattr(file_ops_module, "ARTEFACTS_DIR", artefacts_dir)
+
+    target = artefacts_dir / "victim.md"
+    target.write_text("content")
+
+    delete_artefact(str(target))
+    assert not target.exists()
+
+
+def test_delete_artefact_rejects_outside_dir(tmp_path, monkeypatch):
+    """delete_artefact refuses paths outside the artefacts dir"""
+    artefacts_dir = tmp_path / "artefacts"
+    artefacts_dir.mkdir()
+    monkeypatch.setattr(file_ops_module, "ARTEFACTS_DIR", artefacts_dir)
+
+    outsider = tmp_path / "important.txt"
+    outsider.write_text("do not delete")
+
+    with pytest.raises(ValueError, match="outside artefacts dir"):
+        delete_artefact(str(outsider))
+    assert outsider.exists()
+
+
+def test_load_artefact(tmp_path):
     """Test loading an artefact"""
-    monkeypatch.chdir(tmp_path)
-
-    # Create test file
-    os.makedirs('artefacts', exist_ok=True)
     test_content = "Test artefact content"
-    filepath = 'artefacts/test.md'
+    filepath = tmp_path / "test.md"
+    filepath.write_text(test_content)
 
-    with open(filepath, 'w') as f:
-        f.write(test_content)
-
-    # Load artefact
-    loaded_content = load_artefact(filepath)
+    loaded_content = load_artefact(str(filepath))
 
     assert loaded_content == test_content
 

@@ -1,6 +1,6 @@
 """Artifact gallery and history view"""
 import streamlit as st
-from utils.file_operations import list_artefacts, load_artefact
+from utils.file_operations import list_artefacts, load_artefact, delete_artefact
 import os
 
 
@@ -81,6 +81,24 @@ def render_gallery():
                     )
                 except Exception as e:
                     st.error(f"Error: {str(e)}")
+
+                # Delete (two-click confirm)
+                confirm_key = f"confirm_delete_{idx}"
+                if st.session_state.get(confirm_key):
+                    if st.button("Confirm delete", key=f"do_delete_{idx}", type="primary"):
+                        try:
+                            delete_artefact(artifact['filepath'])
+                            st.session_state[confirm_key] = False
+                            st.rerun()
+                        except Exception as e:
+                            st.error(f"Could not delete: {str(e)}")
+                    if st.button("Cancel", key=f"cancel_delete_{idx}"):
+                        st.session_state[confirm_key] = False
+                        st.rerun()
+                else:
+                    if st.button("Delete", key=f"delete_{idx}"):
+                        st.session_state[confirm_key] = True
+                        st.rerun()
 
             # Add a subtle divider
             if idx < len(artefacts) - 1:

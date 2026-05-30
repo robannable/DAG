@@ -12,7 +12,6 @@ st.set_page_config(
 )
 
 import os
-import json
 import pathlib
 from dotenv import load_dotenv
 
@@ -21,7 +20,8 @@ from utils.logging_config import setup_logging
 from utils.config import (
     load_artefact_categories,
     load_prompt_instructions,
-    load_model_config
+    load_model_config,
+    load_full_model_config
 )
 from utils.file_operations import save_artefact
 from utils.image_processing import prepare_images_for_api
@@ -85,8 +85,7 @@ Generate speculative documents and artefacts for architectural projects.
 # Sidebar controls
 with st.sidebar:
     # Load model configurations
-    with open('model_config.json', 'r') as f:
-        config = json.load(f)
+    config = load_full_model_config()
 
     # Create formatted options for the dropdown
     provider_options = {
