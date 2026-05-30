@@ -1,10 +1,53 @@
 """Tests for API providers"""
 import pytest
 from unittest.mock import Mock
+import api.providers as providers_module
 from api.providers import (
     prepare_request_data,
-    extract_response
+    extract_response,
+    generate_artefact
 )
+
+
+ANTHROPIC_CFG = {
+    "provider": "anthropic",
+    "model": "claude-sonnet-4-6",
+    "max_tokens": 4000,
+    "temperature": 0.7,
+    "api_endpoint": "https://example.test/v1/messages",
+    "api_key_env": "ANTHROPIC_API_KEY",
+    "headers": {"Content-Type": "application/json"},
+}
+
+
+def test_generate_artefact_http_error_is_error_prefixed(monkeypatch):
+    """A non-200 response must return an 'Error'-prefixed string.
+
+    DAG.py gates display/save on ``not result.startswith("Error")``, so any
+    failure that doesn't use that prefix is silently treated as a successful
+    artefact. This locks the contract.
+    """
+    class FakeResponse:
+        status_code = 404
+        text = '{"type":"error","error":{"message":"model not found"}}'
+
+        def json(self):
+            return {}
+
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key")
+    monkeypatch.setattr(
+        providers_module, "make_api_request_with_retry",
+        lambda *a, **k: FakeResponse()
+    )
+
+    result = generate_artefact(
+        "desc", "2030", "bios", "themes", "loc",
+        {"category": "Device/Object", "items": ["Device/Object"]},
+        ANTHROPIC_CFG, "closing instruction",
+    )
+
+    assert result.startswith("Error")
+    assert "404" in result
 
 
 def test_prepare_request_data_anthropic():
