@@ -16,7 +16,7 @@ def load_artefact_categories() -> List[str]:
     try:
         with open(ARTEFACT_CATEGORIES_PATH, 'r') as f:
             data = json.load(f)
-            logging.info(f"Successfully loaded artefact types: {data['artefact_types']}")
+            logging.debug(f"Successfully loaded artefact types: {data['artefact_types']}")
             return data['artefact_types']
     except Exception as e:
         logging.error(f"Error loading artefact categories: {str(e)}")
