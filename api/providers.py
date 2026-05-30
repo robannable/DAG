@@ -2,7 +2,7 @@
 import os
 import json
 import logging
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, Iterator
 import requests
 from api.retry import (
     make_api_request_with_retry,
@@ -11,17 +11,13 @@ from api.retry import (
 )
 
 
-def consume_anthropic_stream(response: requests.Response) -> str:
-    """Accumulate text from an Anthropic server-sent-events stream.
+def iter_anthropic_stream(response: requests.Response) -> Iterator[str]:
+    """Yield text chunks from an Anthropic server-sent-events stream.
 
-    Iterates the streamed response, extracting text from ``text_delta`` events
-    and concatenating them. Because text arrives continuously, the underlying
-    read timeout (gap between chunks) never trips on a long completion.
-
-    Returns the full text, or an "Error:"-prefixed string if the API streams
-    an error event.
+    Emits the text of each ``text_delta`` event as it arrives, so callers can
+    render output live. On a streamed error event, yields a single
+    "Error:"-prefixed chunk and stops.
     """
-    parts = []
     for raw_line in response.iter_lines(decode_unicode=True):
         if not raw_line or not raw_line.startswith("data:"):
             continue
@@ -34,12 +30,23 @@ def consume_anthropic_stream(response: requests.Response) -> str:
         if event_type == "content_block_delta":
             delta = event.get("delta", {})
             if delta.get("type") == "text_delta":
-                parts.append(delta.get("text", ""))
+                yield delta.get("text", "")
         elif event_type == "error":
             message = event.get("error", {}).get("message", "unknown streaming error")
             logging.error(f"Anthropic stream error: {message}")
-            return f"Error: API streaming error - {message}"
-    return "".join(parts)
+            yield f"Error: API streaming error - {message}"
+            return
+
+
+def consume_anthropic_stream(response: requests.Response) -> str:
+    """Accumulate an Anthropic stream into a single string.
+
+    Thin wrapper over :func:`iter_anthropic_stream`; because text arrives
+    continuously the read timeout (gap between chunks) never trips on a long
+    completion. Returns the full text, or an "Error:"-prefixed string if the
+    API streams an error event.
+    """
+    return "".join(iter_anthropic_stream(response))
 
 
 # All static instruction scaffolding lives here so it forms a single,
@@ -151,7 +158,7 @@ def extract_response(response: requests.Response, model_config: Dict[str, Any]) 
             return f"Error parsing response: {str(e)}"
 
 
-def generate_artefact(
+def stream_artefact(
     project_description: str,
     date: str,
     user_bios: str,
@@ -162,24 +169,15 @@ def generate_artefact(
     closing_instruction: str,
     temperature: Optional[float] = None,
     retry_config: Optional[RetryConfig] = None
-) -> str:
+) -> Iterator[str]:
     """
-    Generate a diegetic artefact using the configured API provider
+    Generate a diegetic artefact, yielding text chunks as they arrive.
 
-    Args:
-        project_description: Description of the project
-        date: Date or timeframe
-        user_bios: User personas
-        themes: Key themes
-        location: Project location
-        selected_type: Selected artefact type
-        model_config: Model configuration
-        closing_instruction: Closing instruction from config
-        temperature: Optional temperature override
-        retry_config: Optional retry configuration
+    For Anthropic the response is streamed token-by-token (suitable for
+    ``st.write_stream``); for Ollama the full response is yielded as one chunk.
+    On any failure a single "Error:"-prefixed chunk is yielded.
 
-    Returns:
-        Generated artefact content or error message
+    Args mirror :func:`generate_artefact`.
     """
     provider = model_config.get('provider', '')
     headers = model_config['headers'].copy()
@@ -187,10 +185,12 @@ def generate_artefact(
     if provider == 'anthropic':
         api_key = os.getenv(model_config['api_key_env'])
         if not api_key:
-            return f"Error: {model_config['api_key_env']} not found in environment variables"
+            yield f"Error: {model_config['api_key_env']} not found in environment variables"
+            return
         headers["x-api-key"] = api_key
     elif provider != 'ollama':
-        return f"Error: Unsupported provider {provider!r}. Supported: anthropic, ollama."
+        yield f"Error: Unsupported provider {provider!r}. Supported: anthropic, ollama."
+        return
 
     logging.info(f"Using provider: {provider}")
 
@@ -235,8 +235,9 @@ Keep your entire response within approximately {safe_tokens} tokens, and make su
             if response.status_code != 200:
                 error_message = f"Error: API request failed (HTTP {response.status_code}) - {response.text}"
                 logging.error(error_message)
-                return error_message
-            response_content = consume_anthropic_stream(response)
+                yield error_message
+                return
+            yield from iter_anthropic_stream(response)
         else:
             # Ollama (local): non-streaming request is fine over localhost
             response = make_api_request_with_retry(
@@ -250,17 +251,37 @@ Keep your entire response within approximately {safe_tokens} tokens, and make su
             if response.status_code != 200:
                 error_message = f"Error: API request failed (HTTP {response.status_code}) - {response.text}"
                 logging.error(error_message)
-                return error_message
-            response_content = extract_response(response, model_config)
-
-        response_length = len(response_content)
-        if response_length > (model_config["max_tokens"] * 0.9):
-            logging.warning(f"Response approaching token limit: {response_length} tokens")
-        return response_content
+                yield error_message
+                return
+            yield extract_response(response, model_config)
     except Exception as e:
         error_message = f"Error generating artefact: {str(e)}"
         logging.error(error_message)
-        return error_message
+        yield error_message
+
+
+def generate_artefact(
+    project_description: str,
+    date: str,
+    user_bios: str,
+    themes: str,
+    location: str,
+    selected_type: Dict[str, Any],
+    model_config: Dict[str, Any],
+    closing_instruction: str,
+    temperature: Optional[float] = None,
+    retry_config: Optional[RetryConfig] = None
+) -> str:
+    """Generate a diegetic artefact and return the full text (or an error).
+
+    Thin wrapper that exhausts :func:`stream_artefact`; use that generator
+    directly for live streaming.
+    """
+    return "".join(stream_artefact(
+        project_description, date, user_bios, themes, location,
+        selected_type, model_config, closing_instruction,
+        temperature=temperature, retry_config=retry_config
+    ))
 
 
 def get_available_ollama_models() -> list:

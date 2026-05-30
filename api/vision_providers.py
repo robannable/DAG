@@ -1,10 +1,10 @@
 """Vision-enhanced API provider functions - Anthropic Claude only"""
 import os
 import logging
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, Iterator
 import requests
 from api.retry import make_streaming_request_with_retry, RetryConfig
-from api.providers import consume_anthropic_stream
+from api.providers import iter_anthropic_stream
 
 
 # Static instruction scaffolding for the vision path. Kept as a single
@@ -94,7 +94,7 @@ def prepare_vision_request_anthropic(
     }
 
 
-def generate_artefact_with_vision(
+def stream_artefact_with_vision(
     project_description: str,
     date: str,
     user_bios: str,
@@ -106,36 +106,26 @@ def generate_artefact_with_vision(
     closing_instruction: str,
     temperature: Optional[float] = None,
     retry_config: Optional[RetryConfig] = None
-) -> str:
+) -> Iterator[str]:
     """
-    Generate artifact using vision-enhanced API (Anthropic Claude only)
+    Vision-enhanced generation (Anthropic only), yielding text chunks live.
 
-    Args:
-        project_description: Project description
-        date: Date/timeframe
-        user_bios: User personas
-        themes: Key themes
-        location: Location
-        selected_type: Selected artifact type
-        images: List of processed image data
-        model_config: Model configuration
-        closing_instruction: Closing instruction
-        temperature: Optional temperature
-        retry_config: Optional retry config
-
-    Returns:
-        Generated artifact content or error message
+    Suitable for ``st.write_stream``. On any failure a single
+    "Error:"-prefixed chunk is yielded. Args mirror
+    :func:`generate_artefact_with_vision`.
     """
     provider = model_config.get('provider', '')
 
     # Check if provider supports vision (Anthropic only)
     if provider != 'anthropic':
-        return f"Error: Vision features only supported with Anthropic Claude. Current provider: '{provider}'. Please switch to Anthropic in the sidebar."
+        yield f"Error: Vision features only supported with Anthropic Claude. Current provider: '{provider}'. Please switch to Anthropic in the sidebar."
+        return
 
     # Get API key
     api_key = os.getenv(model_config['api_key_env'])
     if not api_key:
-        return f"Error: {model_config['api_key_env']} not found in environment variables. Please add it to your .env file."
+        yield f"Error: {model_config['api_key_env']} not found in environment variables. Please add it to your .env file."
+        return
 
     # Prepare headers (Anthropic format)
     headers = model_config['headers'].copy()
@@ -184,14 +174,38 @@ Additional creative guidance: {closing_instruction}"""
         if response.status_code != 200:
             error_message = f"Error: API request failed (HTTP {response.status_code}) - {response.text}"
             logging.error(error_message)
-            return error_message
+            yield error_message
+            return
 
-        content = consume_anthropic_stream(response)
-
-        logging.info(f"Successfully generated vision-enhanced artifact ({len(content)} chars)")
-        return content
+        yield from iter_anthropic_stream(response)
+        logging.info("Completed vision-enhanced artifact stream")
 
     except Exception as e:
         error_message = f"Error generating vision-enhanced artefact: {str(e)}"
         logging.error(error_message)
-        return error_message
+        yield error_message
+
+
+def generate_artefact_with_vision(
+    project_description: str,
+    date: str,
+    user_bios: str,
+    themes: str,
+    location: str,
+    selected_type: Dict[str, Any],
+    images: List[dict],
+    model_config: Dict[str, Any],
+    closing_instruction: str,
+    temperature: Optional[float] = None,
+    retry_config: Optional[RetryConfig] = None
+) -> str:
+    """Vision-enhanced generation returning the full text (or an error).
+
+    Thin wrapper that exhausts :func:`stream_artefact_with_vision`; use that
+    generator directly for live streaming.
+    """
+    return "".join(stream_artefact_with_vision(
+        project_description, date, user_bios, themes, location,
+        selected_type, images, model_config, closing_instruction,
+        temperature=temperature, retry_config=retry_config
+    ))

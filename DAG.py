@@ -25,8 +25,8 @@ from utils.config import (
 )
 from utils.file_operations import save_artefact
 from utils.image_processing import prepare_images_for_api
-from api.providers import generate_artefact
-from api.vision_providers import generate_artefact_with_vision
+from api.providers import stream_artefact
+from api.vision_providers import stream_artefact_with_vision
 from api.retry import RetryConfig
 from ui.components import render_sidebar
 from ui.gallery import render_gallery, display_artifact
@@ -160,8 +160,15 @@ with tab1:
         if not all([project_description, date, user_bios, themes, location, selected_category]):
             st.warning("Please fill in all fields before generating an artefact.")
         else:
-            # Load model config
+            # Load model config and shared generation inputs
             model_config = load_model_config()
+            selected_type = {"category": selected_category, "items": [selected_category]}
+            closing_instruction = load_prompt_instructions()
+            retry_config = RetryConfig(max_retries=3, base_delay=1.0, max_delay=10.0)
+
+            # Output streams live into this placeholder; once complete it is
+            # cleared so the polished display section below renders it once.
+            stream_placeholder = st.empty()
 
             # Check if using vision
             if uploaded_files and use_vision:
@@ -185,65 +192,57 @@ with tab1:
                     st.error("No valid images could be processed. Please check your image files.")
                     st.stop()
 
-                # Generate with vision
-                with st.spinner(f"Analyzing {len(processed_images)} image(s) and generating artifact..."):
-                    selected_type = {"category": selected_category, "items": [selected_category]}
-                    closing_instruction = load_prompt_instructions()
-
-                    retry_config = RetryConfig(
-                        max_retries=3,
-                        base_delay=1.0,
-                        max_delay=10.0
-                    )
-
-                    st.session_state.current_artefact = generate_artefact_with_vision(
-                        project_description,
-                        date,
-                        user_bios,
-                        themes,
-                        location,
-                        selected_type,
-                        processed_images,
-                        model_config,
-                        closing_instruction,
-                        temperature=temperature,
-                        retry_config=retry_config
+                # Generate with vision, streaming tokens live
+                with stream_placeholder.container():
+                    st.caption(f"Analyzing {len(processed_images)} image(s) and generating…")
+                    st.session_state.current_artefact = st.write_stream(
+                        stream_artefact_with_vision(
+                            project_description,
+                            date,
+                            user_bios,
+                            themes,
+                            location,
+                            selected_type,
+                            processed_images,
+                            model_config,
+                            closing_instruction,
+                            temperature=temperature,
+                            retry_config=retry_config
+                        )
                     )
 
             else:
-                # Standard text-only generation
-                with st.spinner("Generating your diegetic artefact..."):
-                    selected_type = {"category": selected_category, "items": [selected_category]}
-                    closing_instruction = load_prompt_instructions()
-
-                    retry_config = RetryConfig(
-                        max_retries=3,
-                        base_delay=1.0,
-                        max_delay=10.0
+                # Standard text-only generation, streaming tokens live
+                with stream_placeholder.container():
+                    st.caption("Generating your diegetic artefact…")
+                    st.session_state.current_artefact = st.write_stream(
+                        stream_artefact(
+                            project_description,
+                            date,
+                            user_bios,
+                            themes,
+                            location,
+                            selected_type,
+                            model_config,
+                            closing_instruction,
+                            temperature=temperature,
+                            retry_config=retry_config
+                        )
                     )
 
-                    st.session_state.current_artefact = generate_artefact(
-                        project_description,
-                        date,
-                        user_bios,
-                        themes,
-                        location,
-                        selected_type,
-                        model_config,
-                        closing_instruction,
-                        temperature=temperature,
-                        retry_config=retry_config
-                    )
+            result = st.session_state.current_artefact
+            # Clear the live stream so the styled display section renders once.
+            stream_placeholder.empty()
 
-            if not st.session_state.current_artefact.startswith("Error"):
+            if result.startswith("Error"):
+                st.error(result)
+            else:
                 # Extract thinking content if present
-                artifact_content, think_content = extract_think_content(
-                    st.session_state.current_artefact
-                )
+                artifact_content, think_content = extract_think_content(result)
 
                 # Save the artefact to a file
                 filename = save_artefact(
-                    st.session_state.current_artefact,
+                    result,
                     project_description,
                     date,
                     location,

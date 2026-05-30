@@ -6,6 +6,7 @@ from api.providers import (
     prepare_request_data,
     extract_response,
     generate_artefact,
+    stream_artefact,
     consume_anthropic_stream,
 )
 
@@ -76,6 +77,44 @@ def test_generate_artefact_streams_text(monkeypatch):
     )
 
     assert result == "Hello world"
+
+
+def test_stream_artefact_yields_incremental_chunks(monkeypatch):
+    """stream_artefact yields each text delta separately for live rendering."""
+    class FakeStream:
+        status_code = 200
+
+        def iter_lines(self, decode_unicode=False):
+            yield 'data: {"type":"content_block_delta","delta":{"type":"text_delta","text":"Hello "}}'
+            yield 'data: {"type":"content_block_delta","delta":{"type":"text_delta","text":"world"}}'
+
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key")
+    monkeypatch.setattr(
+        providers_module, "make_streaming_request_with_retry",
+        lambda *a, **k: FakeStream()
+    )
+
+    chunks = list(stream_artefact(
+        "desc", "2030", "bios", "themes", "loc",
+        {"category": "Device/Object", "items": ["Device/Object"]},
+        ANTHROPIC_CFG, "closing instruction",
+    ))
+
+    assert chunks == ["Hello ", "world"]
+
+
+def test_stream_artefact_yields_single_error_chunk_when_key_missing(monkeypatch):
+    """A setup failure yields exactly one 'Error'-prefixed chunk."""
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+
+    chunks = list(stream_artefact(
+        "desc", "2030", "bios", "themes", "loc",
+        {"category": "Device/Object", "items": ["Device/Object"]},
+        ANTHROPIC_CFG, "closing instruction",
+    ))
+
+    assert len(chunks) == 1
+    assert chunks[0].startswith("Error")
 
 
 def test_consume_anthropic_stream_concatenates_text_deltas():
