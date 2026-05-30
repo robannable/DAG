@@ -5,7 +5,8 @@ import api.providers as providers_module
 from api.providers import (
     prepare_request_data,
     extract_response,
-    generate_artefact
+    generate_artefact,
+    consume_anthropic_stream,
 )
 
 
@@ -36,7 +37,7 @@ def test_generate_artefact_http_error_is_error_prefixed(monkeypatch):
 
     monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key")
     monkeypatch.setattr(
-        providers_module, "make_api_request_with_retry",
+        providers_module, "make_streaming_request_with_retry",
         lambda *a, **k: FakeResponse()
     )
 
@@ -48,6 +49,57 @@ def test_generate_artefact_http_error_is_error_prefixed(monkeypatch):
 
     assert result.startswith("Error")
     assert "404" in result
+
+
+def test_generate_artefact_streams_text(monkeypatch):
+    """A 200 streaming response is accumulated into the full artefact text."""
+    class FakeStream:
+        status_code = 200
+
+        def iter_lines(self, decode_unicode=False):
+            yield 'data: {"type":"message_start"}'
+            yield 'data: {"type":"content_block_delta","delta":{"type":"text_delta","text":"Hello "}}'
+            yield ''  # keep-alive blank line
+            yield 'data: {"type":"content_block_delta","delta":{"type":"text_delta","text":"world"}}'
+            yield 'data: {"type":"message_stop"}'
+
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key")
+    monkeypatch.setattr(
+        providers_module, "make_streaming_request_with_retry",
+        lambda *a, **k: FakeStream()
+    )
+
+    result = generate_artefact(
+        "desc", "2030", "bios", "themes", "loc",
+        {"category": "Device/Object", "items": ["Device/Object"]},
+        ANTHROPIC_CFG, "closing instruction",
+    )
+
+    assert result == "Hello world"
+
+
+def test_consume_anthropic_stream_concatenates_text_deltas():
+    """The SSE parser extracts and joins text_delta events, ignoring others."""
+    class FakeStream:
+        def iter_lines(self, decode_unicode=False):
+            yield 'event: content_block_delta'  # non-data line ignored
+            yield 'data: {"type":"content_block_delta","delta":{"type":"text_delta","text":"abc"}}'
+            yield 'data: {"type":"ping"}'  # ignored
+            yield 'data: not-json'  # malformed, skipped
+            yield 'data: {"type":"content_block_delta","delta":{"type":"text_delta","text":"def"}}'
+
+    assert consume_anthropic_stream(FakeStream()) == "abcdef"
+
+
+def test_consume_anthropic_stream_surfaces_error_event():
+    """An error event in the stream returns an 'Error'-prefixed string."""
+    class FakeStream:
+        def iter_lines(self, decode_unicode=False):
+            yield 'data: {"type":"error","error":{"message":"overloaded"}}'
+
+    result = consume_anthropic_stream(FakeStream())
+    assert result.startswith("Error")
+    assert "overloaded" in result
 
 
 def test_prepare_request_data_anthropic():
@@ -64,6 +116,7 @@ def test_prepare_request_data_anthropic():
     assert data["model"] == "claude-sonnet-4"
     assert data["max_tokens"] == 4000
     assert data["temperature"] == 0.7
+    assert data["stream"] is True
     assert "system" in data
     assert isinstance(data["system"], list)
     assert data["system"][0]["cache_control"] == {"type": "ephemeral"}

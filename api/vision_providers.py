@@ -3,7 +3,8 @@ import os
 import logging
 from typing import Dict, Any, List, Optional
 import requests
-from api.retry import make_api_request_with_retry, RetryConfig
+from api.retry import make_streaming_request_with_retry, RetryConfig
+from api.providers import consume_anthropic_stream
 
 
 # Static instruction scaffolding for the vision path. Kept as a single
@@ -76,6 +77,7 @@ def prepare_vision_request_anthropic(
         "model": model_config["model"],
         "max_tokens": model_config["max_tokens"],
         "temperature": model_config["temperature"],
+        "stream": True,
         "system": [
             {
                 "type": "text",
@@ -167,13 +169,14 @@ Additional creative guidance: {closing_instruction}"""
     logging.debug(f"Request contains {len(images)} images")
 
     try:
-        # Make request with retry
-        response = make_api_request_with_retry(
+        # Stream the response (per-chunk timeout) so a long vision completion
+        # doesn't trip a single large read timeout.
+        response = make_streaming_request_with_retry(
             model_config["api_endpoint"],
             headers,
             data,
             config=retry_config,
-            timeout=120  # Longer timeout for vision
+            timeout=120  # max gap between chunks
         )
 
         logging.debug(f"Response status code: {response.status_code}")
@@ -183,9 +186,7 @@ Additional creative guidance: {closing_instruction}"""
             logging.error(error_message)
             return error_message
 
-        # Extract response (Anthropic format)
-        response_json = response.json()
-        content = response_json['content'][0]['text']
+        content = consume_anthropic_stream(response)
 
         logging.info(f"Successfully generated vision-enhanced artifact ({len(content)} chars)")
         return content

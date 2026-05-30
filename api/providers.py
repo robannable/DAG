@@ -1,9 +1,45 @@
 """API provider classes and request handling"""
 import os
+import json
 import logging
 from typing import Dict, Any, Optional
 import requests
-from api.retry import make_api_request_with_retry, RetryConfig
+from api.retry import (
+    make_api_request_with_retry,
+    make_streaming_request_with_retry,
+    RetryConfig,
+)
+
+
+def consume_anthropic_stream(response: requests.Response) -> str:
+    """Accumulate text from an Anthropic server-sent-events stream.
+
+    Iterates the streamed response, extracting text from ``text_delta`` events
+    and concatenating them. Because text arrives continuously, the underlying
+    read timeout (gap between chunks) never trips on a long completion.
+
+    Returns the full text, or an "Error:"-prefixed string if the API streams
+    an error event.
+    """
+    parts = []
+    for raw_line in response.iter_lines(decode_unicode=True):
+        if not raw_line or not raw_line.startswith("data:"):
+            continue
+        payload = raw_line[len("data:"):].strip()
+        try:
+            event = json.loads(payload)
+        except (ValueError, json.JSONDecodeError):
+            continue
+        event_type = event.get("type")
+        if event_type == "content_block_delta":
+            delta = event.get("delta", {})
+            if delta.get("type") == "text_delta":
+                parts.append(delta.get("text", ""))
+        elif event_type == "error":
+            message = event.get("error", {}).get("message", "unknown streaming error")
+            logging.error(f"Anthropic stream error: {message}")
+            return f"Error: API streaming error - {message}"
+    return "".join(parts)
 
 
 # All static instruction scaffolding lives here so it forms a single,
@@ -60,6 +96,7 @@ def prepare_request_data(
             "model": model_config["model"],
             "max_tokens": model_config["max_tokens"],
             "temperature": model_config["temperature"],
+            "stream": True,
             "system": [
                 {
                     "type": "text",
@@ -184,24 +221,38 @@ Keep your entire response within approximately {safe_tokens} tokens, and make su
     logging.debug(f"Request data keys: {list(data.keys())}")
 
     try:
-        # Make API request with retry logic
-        response = make_api_request_with_retry(
-            model_config["api_endpoint"],
-            headers,
-            data,
-            config=retry_config,
-            timeout=60
-        )
+        if provider == 'anthropic':
+            # Stream the response so long completions don't hit the read
+            # timeout: tokens arrive continuously instead of in one big read.
+            response = make_streaming_request_with_retry(
+                model_config["api_endpoint"],
+                headers,
+                data,
+                config=retry_config,
+                timeout=60
+            )
+            logging.debug(f"Response status code: {response.status_code}")
+            if response.status_code != 200:
+                error_message = f"Error: API request failed (HTTP {response.status_code}) - {response.text}"
+                logging.error(error_message)
+                return error_message
+            response_content = consume_anthropic_stream(response)
+        else:
+            # Ollama (local): non-streaming request is fine over localhost
+            response = make_api_request_with_retry(
+                model_config["api_endpoint"],
+                headers,
+                data,
+                config=retry_config,
+                timeout=60
+            )
+            logging.debug(f"Response status code: {response.status_code}")
+            if response.status_code != 200:
+                error_message = f"Error: API request failed (HTTP {response.status_code}) - {response.text}"
+                logging.error(error_message)
+                return error_message
+            response_content = extract_response(response, model_config)
 
-        # Log response information
-        logging.debug(f"Response status code: {response.status_code}")
-
-        if response.status_code != 200:
-            error_message = f"Error: API request failed (HTTP {response.status_code}) - {response.text}"
-            logging.error(error_message)
-            return error_message
-
-        response_content = extract_response(response, model_config)
         response_length = len(response_content)
         if response_length > (model_config["max_tokens"] * 0.9):
             logging.warning(f"Response approaching token limit: {response_length} tokens")
