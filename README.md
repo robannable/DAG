@@ -14,8 +14,9 @@ cd DAG
 # or
 setup.bat    # Windows
 
-# Add your Anthropic API key to .env (required for vision features)
+# Add an Anthropic and/or OpenRouter API key to .env
 echo "ANTHROPIC_API_KEY=sk-ant-..." > .env
+echo "OPENROUTER_API_KEY=sk-or-..." >> .env
 
 # Run the app
 streamlit run DAG.py
@@ -39,14 +40,14 @@ Diegetic artefacts are objects or documents that exist within a narrative world.
 - **8 Artifact Categories**: Personal/Intimate, Community/Collective, Economic/Resource, Device/Object, Speculative/Critical, Ecological/More-than-human, Institutional/Formal, Maintenance/Care
 - **Context-Aware**: Uses project description, location, timeline, user personas, and key themes
 - **Markdown Output**: Generated artifacts saved as timestamped `.md` files
-- **Temperature Control**: Adjust creativity vs. consistency
+- **Temperature Control**: Adjust creativity vs. consistency, on models that accept it (Claude 5 models set their own sampling, so the slider is hidden for them)
 
 ### 🔍 Vision Analysis (Optional)
 - **Upload sketches, diagrams, or photos** to enhance generation
 - **AI vision analysis** extracts spatial relationships, annotations (OCR), materials, and context
 - **Ground artifacts in reality**: References specific spaces, dimensions, and site features from your images
 - **Supports**: PNG, JPG, JPEG, WEBP (up to 5 images, 20MB each)
-- **Requires**: Anthropic Claude
+- **Requires**: Anthropic Claude, or an OpenRouter model marked "reads images"
 
 ### 📚 Artifact Gallery
 - **Browse all generated artifacts** with metadata
@@ -58,20 +59,23 @@ Diegetic artefacts are objects or documents that exist within a narrative world.
 
 | Provider | Text | Vision | Local | Best For |
 |----------|------|--------|-------|----------|
-| **Anthropic Claude** | ✅ | ✅ | ❌ | Production, vision analysis |
+| **Anthropic Claude** (Sonnet 5) | ✅ | ✅ | ❌ | Default; vision analysis |
+| **OpenRouter** | ✅ | ✅ on image-capable models | ❌ | Comparing hundreds of models (Gemini, GPT, DeepSeek, Qwen, Claude...) with one key |
 | **Ollama** | ✅ | ❌ | ✅ | Local/offline, privacy, no cost |
+
+Provider and model choices apply to your browser session only; nothing is written back to `model_config.json`.
 
 ### 🔧 Robust Architecture
 - **Modular codebase**: Separated API, UI, and utility modules
 - **Retry logic**: Automatic retry with exponential backoff for failed requests
-- **Comprehensive tests**: 46 tests covering core functionality
+- **Comprehensive tests**: 76 tests covering core functionality
 - **Gallery view**: Manage and browse all your artifacts
 
 ## Usage
 
 ### Basic Text Generation
 
-1. **Select provider** in sidebar (Anthropic or Ollama)
+1. **Select provider** in sidebar (Anthropic, OpenRouter or Ollama); for OpenRouter, pick a model from the searchable list, which shows each model's price
 2. **Fill in project details**:
    - Project description
    - Location
@@ -84,7 +88,7 @@ Diegetic artefacts are objects or documents that exist within a narrative world.
 
 ### Vision-Enhanced Generation
 
-1. **Select Anthropic Claude** in sidebar
+1. **Select Anthropic**, or an OpenRouter model marked "reads images", in the sidebar
 2. **Expand "📸 Visual Context"** section
 3. **Upload images**:
    - Concept sketches with annotations
@@ -104,11 +108,22 @@ Diegetic artefacts are objects or documents that exist within a narrative world.
 ### Environment Setup (.env)
 
 ```bash
-# Required for Anthropic (text + vision)
+# Anthropic (text + vision)
 ANTHROPIC_API_KEY=sk-ant-...
+
+# OpenRouter (https://openrouter.ai/keys) - one key for many model vendors
+OPENROUTER_API_KEY=sk-or-...
 
 # Ollama runs locally, no API key needed
 ```
+
+Optional settings, mainly for a server install:
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `DAG_PROVIDERS` | all configured | Comma-separated providers to offer, e.g. `anthropic,openrouter` to hide Ollama |
+| `DAG_ARTEFACTS_DIR` | `./artefacts` | Where generated artefacts are saved |
+| `DAG_LOG_FILE` | `artefact_generator_debug.log` | Rotating debug log (5 MB x 3); set empty to log to the console only |
 
 ### Model Configuration (model_config.json)
 
@@ -117,8 +132,15 @@ ANTHROPIC_API_KEY=sk-ant-...
     "current_provider": "anthropic",
     "providers": {
         "anthropic": {
-            "model": "claude-sonnet-4-6",
+            "model": "claude-sonnet-5",
             "max_tokens": 4000,
+            "supports_temperature": false,
+            "thinking": {"type": "disabled"},
+            ...
+        },
+        "openrouter": {
+            "model": "google/gemini-3.8-flash",
+            "max_tokens": 8000,
             "temperature": 0.7,
             ...
         },
@@ -225,8 +247,8 @@ DAG/
 ├── test_vision_api.py          # Vision verification utility
 │
 ├── api/                        # API modules
-│   ├── providers.py            # Anthropic + Ollama text generation
-│   ├── vision_providers.py     # Anthropic vision (images)
+│   ├── providers.py            # Anthropic, OpenRouter + Ollama text generation
+│   ├── vision_providers.py     # Vision (Anthropic / OpenRouter)
 │   └── retry.py                # Retry logic with exponential backoff
 │
 ├── ui/                         # UI components
@@ -243,6 +265,7 @@ DAG/
 ├── tests/                      # Test suite (46 tests)
 │   ├── test_config.py
 │   ├── test_file_operations.py
+│   ├── test_openrouter.py
 │   ├── test_providers.py
 │   ├── test_retry.py
 │   ├── test_image_processing.py
@@ -257,7 +280,8 @@ DAG/
 ├── artefact_categories.json    # Artifact type definitions
 ├── model_config.json           # AI provider configurations
 ├── prompt_instructions.json    # Generation guidelines
-├── requirements.txt            # Python dependencies
+├── requirements.txt            # Runtime dependencies
+├── requirements-dev.txt        # + test tools (used by setup scripts)
 └── pytest.ini                  # Test configuration
 ```
 

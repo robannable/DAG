@@ -87,10 +87,16 @@ def save_artefact(
     # Create a sanitized filename
     base_filename = f"{timestamp}_{sanitize_filename(clean_description)}"
     filename = str(ARTEFACTS_DIR / f"{base_filename}.md")
+    # Same project twice in one minute: add a suffix rather than overwrite
+    suffix = 2
+    while os.path.exists(filename):
+        filename = str(ARTEFACTS_DIR / f"{base_filename}_{suffix}.md")
+        suffix += 1
 
     # Get model information
     provider = model_config.get('provider', '')
     model_name = model_config.get('model', 'unknown')
+    temperature_label = temperature if temperature is not None else "model default"
 
     # Machine-readable metadata block (invisible when rendered)
     meta_block = _encode_metadata({
@@ -128,7 +134,7 @@ def save_artefact(
 
 ---
 *Generated on {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}*
-*Model: {provider}/{model_name} (temperature: {temperature})*
+*Model: {provider}/{model_name} (temperature: {temperature_label})*
 
 </div>"""
 

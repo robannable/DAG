@@ -11,13 +11,14 @@ mkdir artefacts
 call venv\Scripts\activate.bat
 
 :: Install requirements
-pip install -r requirements.txt
+pip install -r requirements-dev.txt
 
 :: Check if .env file exists and create if not
 if not exist .env (
     echo Creating .env file...
-    echo ANTHROPIC_API_KEY=your_api_key_here > .env
-    echo Please edit .env file with your Anthropic API key
+    echo ANTHROPIC_API_KEY=your_api_key_here> .env
+    echo OPENROUTER_API_KEY=your_openrouter_key_here>> .env
+    echo Please edit .env with your Anthropic and/or OpenRouter API key
 )
 
 echo Setup complete! To run the application:

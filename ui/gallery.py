@@ -64,7 +64,7 @@ def render_gallery():
 
             with col2:
                 # View button
-                if st.button("View", key=f"view_{idx}"):
+                if st.button("View", key=f"view_{artifact['filename']}"):
                     st.session_state.viewing_artifact = artifact['filepath']
                     st.session_state.show_gallery = False
                     st.rerun()
@@ -77,26 +77,28 @@ def render_gallery():
                         data=content,
                         file_name=artifact['filename'],
                         mime="text/markdown",
-                        key=f"download_{idx}"
+                        key=f"download_{artifact['filename']}"
                     )
                 except Exception as e:
                     st.error(f"Error: {str(e)}")
 
                 # Delete (two-click confirm)
-                confirm_key = f"confirm_delete_{idx}"
+                # Keyed by filename, not list position, so the pending confirm
+                # stays on the same artefact when the search or sort changes
+                confirm_key = f"confirm_delete_{artifact['filename']}"
                 if st.session_state.get(confirm_key):
-                    if st.button("Confirm delete", key=f"do_delete_{idx}", type="primary"):
+                    if st.button("Confirm delete", key=f"do_delete_{artifact['filename']}", type="primary"):
                         try:
                             delete_artefact(artifact['filepath'])
                             st.session_state[confirm_key] = False
                             st.rerun()
                         except Exception as e:
                             st.error(f"Could not delete: {str(e)}")
-                    if st.button("Cancel", key=f"cancel_delete_{idx}"):
+                    if st.button("Cancel", key=f"cancel_delete_{artifact['filename']}"):
                         st.session_state[confirm_key] = False
                         st.rerun()
                 else:
-                    if st.button("Delete", key=f"delete_{idx}"):
+                    if st.button("Delete", key=f"delete_{artifact['filename']}"):
                         st.session_state[confirm_key] = True
                         st.rerun()
 

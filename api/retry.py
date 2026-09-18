@@ -4,6 +4,10 @@ import logging
 from typing import Callable, Any, Optional
 import requests
 
+# Transient statuses worth retrying: rate limits, server errors, and
+# Anthropic's 529 "overloaded".
+RETRYABLE_STATUS_CODES = {429, 500, 502, 503, 504, 529}
+
 
 class RetryConfig:
     """Configuration for retry logic"""
@@ -106,7 +110,7 @@ def make_api_request_with_retry(
     def _make_request():
         response = requests.post(url, headers=headers, json=data, timeout=timeout)
         # Only retry on specific status codes (server errors, rate limits)
-        if response.status_code in [429, 500, 502, 503, 504]:
+        if response.status_code in RETRYABLE_STATUS_CODES:
             logging.warning(f"Received status code {response.status_code}, will retry")
             raise requests.exceptions.RequestException(
                 f"Server returned {response.status_code}"
@@ -153,7 +157,7 @@ def make_streaming_request_with_retry(
             url, headers=headers, json=data, timeout=timeout, stream=True
         )
         # Only retry on specific status codes (server errors, rate limits)
-        if response.status_code in [429, 500, 502, 503, 504]:
+        if response.status_code in RETRYABLE_STATUS_CODES:
             logging.warning(f"Received status code {response.status_code}, will retry")
             response.close()
             raise requests.exceptions.RequestException(

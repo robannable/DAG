@@ -1,12 +1,40 @@
 """UI components for DAG application"""
+from typing import Any, Dict, List, Optional, Tuple
+
 import streamlit as st
-from utils.config import load_model_config
+from utils.config import load_model_config, enabled_providers
+from api.providers import get_openrouter_models, get_available_ollama_models
+
+PROVIDER_LABELS = {
+    "anthropic": "Anthropic",
+    "openrouter": "OpenRouter (many models)",
+    "ollama": "Ollama (local)",
+}
 
 
-def get_model_temperature() -> float:
-    """Render temperature slider and return selected value"""
-    model_config = load_model_config()
-    provider = model_config.get('provider', '')
+@st.cache_data(ttl=3600, show_spinner=False)
+def _cached_openrouter_models(models_endpoint: str) -> List[Dict[str, Any]]:
+    return get_openrouter_models(models_endpoint)
+
+
+def _format_price(model: Dict[str, Any]) -> str:
+    prompt, completion = model["prompt_price"], model["completion_price"]
+    if prompt is None or completion is None:
+        return "variable price"
+    if prompt == 0 and completion == 0:
+        return "free"
+    return f"${prompt:.2f} / ${completion:.2f} per M tokens"
+
+
+def get_model_temperature(model_config: Dict[str, Any]) -> Optional[float]:
+    """Render the temperature slider, or return None if the model rejects it"""
+    if not model_config.get("supports_temperature", True):
+        st.caption(
+            f"`{model_config.get('model')}` sets its own sampling; "
+            "temperature isn't adjustable for this model."
+        )
+        return None
+
     default_temp = model_config.get("temperature", 0.7)
 
     # Get temperature range from config
@@ -43,57 +71,99 @@ def get_model_temperature() -> float:
     return temp_value
 
 
-def render_sidebar(config: dict, provider_options: dict):
-    """Render the sidebar with model settings"""
+def _select_openrouter_model(model_config: Dict[str, Any]) -> Dict[str, Any]:
+    """Model picker for OpenRouter; returns the config with the choice applied"""
+    models = _cached_openrouter_models(model_config["models_endpoint"])
+    default_id = model_config["model"]
+
+    if not models:
+        st.warning("Couldn't load the OpenRouter model list. Enter a model ID instead.")
+        model_config["model"] = st.text_input(
+            "OpenRouter Model ID",
+            value=default_id,
+            key="openrouter_model_text",
+            help="e.g. google/gemini-3.8-flash - see openrouter.ai/models"
+        )
+        # Capabilities unknown: send temperature, don't offer vision
+        model_config["supports_vision"] = False
+        return model_config
+
+    by_id = {m["id"]: m for m in models}
+    ids = list(by_id)
+    selected = st.selectbox(
+        "OpenRouter Model",
+        options=ids,
+        index=ids.index(default_id) if default_id in by_id else 0,
+        format_func=lambda i: by_id[i]["name"],
+        key="openrouter_model",
+        help="Type to search. Prices are per million input / output tokens."
+    )
+    chosen = by_id[selected]
+    st.caption(
+        f"`{selected}` · {_format_price(chosen)}"
+        + (" · reads images" if chosen["supports_vision"] else "")
+    )
+    model_config["model"] = selected
+    model_config["supports_temperature"] = chosen["supports_temperature"]
+    model_config["supports_vision"] = chosen["supports_vision"]
+    return model_config
+
+
+def _select_ollama_model(model_config: Dict[str, Any]) -> Dict[str, Any]:
+    available_models = get_available_ollama_models()
+    default_model = model_config.get('model', 'cogito')
+    if not available_models:
+        st.warning("No Ollama models found. Please make sure Ollama is running and you have pulled at least one model.")
+        model_config["model"] = st.text_input(
+            "Ollama Model Name",
+            value=default_model,
+            key="ollama_model_text",
+            help="Enter the name of your locally installed Ollama model"
+        )
+    else:
+        model_config["model"] = st.selectbox(
+            "Select Ollama Model",
+            options=available_models,
+            index=available_models.index(default_model) if default_model in available_models else 0,
+            key="ollama_model",
+            help="Select from your locally installed Ollama models"
+        )
+    st.caption("Make sure you have pulled your chosen model using 'ollama pull model_name'")
+    return model_config
+
+
+def render_sidebar(config: dict) -> Tuple[Dict[str, Any], Optional[float]]:
+    """Render model settings; return (active model config, temperature).
+
+    All choices are kept in this browser session only - nothing is written
+    back to model_config.json, so users on a shared server don't change
+    each other's settings.
+    """
     st.header("Model Settings")
 
-    def on_model_change():
-        new_provider = provider_options[st.session_state.model_selector]
-        st.session_state.current_provider = new_provider
-        # Update config file
-        from utils.config import save_model_config
-        save_model_config(new_provider)
+    providers = enabled_providers(config)
+    if st.session_state.get('current_provider') not in providers:
+        default = config.get('current_provider', 'anthropic')
+        st.session_state.current_provider = default if default in providers else providers[0]
 
-    # Model provider selection with formatted display
-    current_display = next(
-        display for display, provider in provider_options.items()
-        if provider == st.session_state.current_provider
-    )
-
-    selected_display = st.selectbox(
+    provider = st.selectbox(
         "Choose Model Provider",
-        options=list(provider_options.keys()),
-        index=list(provider_options.keys()).index(current_display),
+        options=providers,
+        index=providers.index(st.session_state.current_provider),
+        format_func=lambda p: PROVIDER_LABELS.get(p, p.title()),
         key='model_selector',
-        on_change=on_model_change
     )
+    st.session_state.current_provider = provider
 
-    # Show Ollama model input if needed
-    if st.session_state.current_provider == 'ollama':
-        from api.providers import get_available_ollama_models
-        from utils.config import update_ollama_model
+    model_config = load_model_config(provider)
+    if provider == 'openrouter':
+        model_config = _select_openrouter_model(model_config)
+    elif provider == 'ollama':
+        model_config = _select_ollama_model(model_config)
+    else:
+        st.caption(f"Model: `{model_config.get('model')}`")
 
-        available_models = get_available_ollama_models()
-        if not available_models:
-            st.warning("No Ollama models found. Please make sure Ollama is running and you have pulled at least one model.")
-            ollama_model = st.text_input(
-                "Ollama Model Name",
-                value=config['providers']['ollama'].get('model', 'cogito'),
-                help="Enter the name of your locally installed Ollama model"
-            )
-        else:
-            ollama_model = st.selectbox(
-                "Select Ollama Model",
-                options=available_models,
-                index=available_models.index(config['providers']['ollama'].get('model', 'cogito')) if config['providers']['ollama'].get('model', 'cogito') in available_models else 0,
-                help="Select from your locally installed Ollama models"
-            )
-
-        update_ollama_model(ollama_model)
-        st.caption("Make sure you have pulled your chosen model using 'ollama pull model_name'")
-
-    # Temperature slider
-    temperature = get_model_temperature()
+    temperature = get_model_temperature(model_config)
 
     # Add spacer to push description to bottom
     st.markdown("<br>" * 5, unsafe_allow_html=True)
@@ -106,4 +176,4 @@ def render_sidebar(config: dict, provider_options: dict):
     [![GitHub](https://img.shields.io/badge/GitHub-View_Source-blue?logo=GitHub)](https://github.com/robannable/DAG)
     """)
 
-    return temperature
+    return model_config, temperature

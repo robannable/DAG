@@ -204,3 +204,31 @@ def test_load_artefact_missing_file():
     """Test loading a missing artefact"""
     with pytest.raises(Exception):
         load_artefact('nonexistent.md')
+
+
+def test_save_artefact_same_minute_does_not_overwrite(tmp_path, monkeypatch):
+    """Two saves of the same project in one minute get distinct files"""
+    monkeypatch.setattr(file_ops_module, "ARTEFACTS_DIR", tmp_path / "artefacts")
+    model_config = {"provider": "anthropic", "model": "test-model"}
+    args = ("Same Project", "2030", "Loc", "Bios", "Themes", model_config, 0.7)
+
+    first = save_artefact("first body", *args)
+    second = save_artefact("second body", *args)
+
+    assert first != second
+    assert second.endswith("_2.md")
+    assert "first body" in load_artefact(first)
+    assert "second body" in load_artefact(second)
+
+
+def test_save_artefact_without_temperature(tmp_path, monkeypatch):
+    """Models that take no temperature are recorded as using the default"""
+    monkeypatch.setattr(file_ops_module, "ARTEFACTS_DIR", tmp_path / "artefacts")
+    model_config = {"provider": "anthropic", "model": "claude-sonnet-5"}
+
+    filename = save_artefact(
+        "body", "Project", "2030", "Loc", "Bios", "Themes", model_config, None
+    )
+
+    assert "temperature: model default" in load_artefact(filename)
+    assert list_artefacts()[0]["model"] == "anthropic/claude-sonnet-5"

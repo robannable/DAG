@@ -6,7 +6,8 @@ from unittest.mock import Mock, patch
 from api.retry import (
     RetryConfig,
     retry_with_exponential_backoff,
-    make_api_request_with_retry
+    make_api_request_with_retry,
+    make_streaming_request_with_retry,
 )
 
 
@@ -141,3 +142,21 @@ def test_make_api_request_no_retry_on_400():
         )
 
     assert response.status_code == 400
+
+
+def test_streaming_request_retries_on_529_overloaded():
+    """Anthropic's 529 "overloaded" is transient and must be retried"""
+    overloaded = Mock()
+    overloaded.status_code = 529
+    ok = Mock()
+    ok.status_code = 200
+
+    with patch('requests.post', side_effect=[overloaded, ok]) as post:
+        response = make_streaming_request_with_retry(
+            "https://api.example.com", {}, {"stream": True},
+            config=RetryConfig(max_retries=2, base_delay=0.01)
+        )
+
+    assert response.status_code == 200
+    assert post.call_count == 2
+    overloaded.close.assert_called_once()
