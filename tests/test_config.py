@@ -6,8 +6,7 @@ from utils.config import (
     load_artefact_categories,
     load_prompt_instructions,
     load_model_config,
-    save_model_config,
-    update_ollama_model
+    enabled_providers,
 )
 
 
@@ -31,62 +30,60 @@ def test_load_prompt_instructions():
 
 
 def test_load_model_config():
-    """Test loading model configuration"""
+    """Test loading the default provider's model configuration"""
     config = load_model_config()
 
     assert isinstance(config, dict)
     assert "model" in config
     assert "max_tokens" in config
-    assert "temperature" in config
     assert "api_endpoint" in config
 
 
-def test_save_model_config(tmp_path, monkeypatch):
-    """Test saving model configuration"""
-    config_file = tmp_path / "model_config.json"
-    test_config = {
-        "current_provider": "anthropic",
-        "providers": {
-            "anthropic": {"model": "test-model"},
-            "ollama": {"model": "test-ollama"}
-        }
-    }
+def test_load_model_config_named_provider():
+    """A named provider is loaded regardless of current_provider"""
+    config = load_model_config("openrouter")
 
-    with open(config_file, 'w') as f:
-        json.dump(test_config, f)
-
-    monkeypatch.setattr(config_module, "MODEL_CONFIG_PATH", config_file)
-
-    save_model_config("ollama")
-
-    with open(config_file, 'r') as f:
-        saved_config = json.load(f)
-
-    assert saved_config['current_provider'] == "ollama"
+    assert config["provider"] == "openrouter"
+    assert config["api_key_env"] == "OPENROUTER_API_KEY"
 
 
-def test_update_ollama_model(tmp_path, monkeypatch):
-    """Test updating Ollama model"""
-    config_file = tmp_path / "model_config.json"
-    test_config = {
-        "current_provider": "ollama",
-        "providers": {
-            "anthropic": {"model": "test-model"},
-            "ollama": {"model": "old-model"}
-        }
-    }
+def test_load_model_config_returns_copy():
+    """Callers mutate the returned dict (model choice); it must not leak"""
+    first = load_model_config("anthropic")
+    first["model"] = "changed"
 
-    with open(config_file, 'w') as f:
-        json.dump(test_config, f)
+    assert load_model_config("anthropic")["model"] != "changed"
 
-    monkeypatch.setattr(config_module, "MODEL_CONFIG_PATH", config_file)
 
-    update_ollama_model("new-model")
+def test_anthropic_default_omits_temperature():
+    """Claude 5 models 400 on temperature, so the shipped config disables it"""
+    config = load_model_config("anthropic")
 
-    with open(config_file, 'r') as f:
-        saved_config = json.load(f)
+    assert config["model"] == "claude-sonnet-5"
+    assert config["supports_temperature"] is False
 
-    assert saved_config['providers']['ollama']['model'] == "new-model"
+
+def test_enabled_providers_defaults_to_all(monkeypatch):
+    monkeypatch.delenv("DAG_PROVIDERS", raising=False)
+    config = {"providers": {"anthropic": {}, "openrouter": {}, "ollama": {}}}
+
+    assert enabled_providers(config) == ["anthropic", "openrouter", "ollama"]
+
+
+def test_enabled_providers_filters_by_env(monkeypatch):
+    monkeypatch.setenv("DAG_PROVIDERS", "openrouter, Anthropic")
+    config = {"providers": {"anthropic": {}, "openrouter": {}, "ollama": {}}}
+
+    # Config order is kept, case and spaces ignored
+    assert enabled_providers(config) == ["anthropic", "openrouter"]
+
+
+def test_enabled_providers_ignores_unknown_only(monkeypatch):
+    """A typo'd env var must not leave the UI with no providers"""
+    monkeypatch.setenv("DAG_PROVIDERS", "antropic")
+    config = {"providers": {"anthropic": {}, "ollama": {}}}
+
+    assert enabled_providers(config) == ["anthropic", "ollama"]
 
 
 def test_load_model_config_with_missing_file(tmp_path, monkeypatch):

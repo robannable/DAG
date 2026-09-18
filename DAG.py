@@ -20,12 +20,11 @@ from utils.logging_config import setup_logging
 from utils.config import (
     load_artefact_categories,
     load_prompt_instructions,
-    load_model_config,
     load_full_model_config
 )
 from utils.file_operations import save_artefact
 from utils.image_processing import prepare_images_for_api
-from api.providers import stream_artefact
+from api.providers import stream_artefact, ErrorChunk
 from api.vision_providers import stream_artefact_with_vision
 from api.retry import RetryConfig
 from ui.components import render_sidebar
@@ -66,8 +65,6 @@ if 'artefacts' not in st.session_state:
     st.session_state.artefacts = []
 if 'show_thinking' not in st.session_state:
     st.session_state.show_thinking = False
-if 'current_provider' not in st.session_state:
-    st.session_state.current_provider = 'anthropic'
 if 'form_data' not in st.session_state:
     st.session_state.form_data = {}
 if 'show_gallery' not in st.session_state:
@@ -79,22 +76,13 @@ if 'viewing_artifact' not in st.session_state:
 st.title("🎭 Diegetic Artefact Generator")
 st.markdown("""
 Generate speculative documents and artefacts for architectural projects.
-**Optional:** Upload sketches, diagrams, or photos for AI-powered visual analysis (Anthropic Claude).
+**Optional:** Upload sketches, diagrams, or photos for AI-powered visual analysis (needs a vision-capable model).
 """)
 
 # Sidebar controls
 with st.sidebar:
-    # Load model configurations
-    config = load_full_model_config()
-
-    # Create formatted options for the dropdown
-    provider_options = {
-        f"{provider.title()} ({config['providers'][provider]['model']})": provider
-        for provider in config['providers'].keys()
-    }
-
-    # Render sidebar and get temperature
-    temperature = render_sidebar(config, provider_options)
+    # Provider/model choices live in this session; the file is read-only
+    model_config, temperature = render_sidebar(load_full_model_config())
 
 # Add tab navigation
 tab1, tab2 = st.tabs(["Generate", "Gallery"])
@@ -160,8 +148,7 @@ with tab1:
         if not all([project_description, date, user_bios, themes, location, selected_category]):
             st.warning("Please fill in all fields before generating an artefact.")
         else:
-            # Load model config and shared generation inputs
-            model_config = load_model_config()
+            # Shared generation inputs (model_config comes from the sidebar)
             selected_type = {"category": selected_category, "items": [selected_category]}
             closing_instruction = load_prompt_instructions()
             retry_config = RetryConfig(max_retries=3, base_delay=1.0, max_delay=10.0)
@@ -169,6 +156,16 @@ with tab1:
             # Output streams live into this placeholder; once complete it is
             # cleared so the polished display section below renders it once.
             stream_placeholder = st.empty()
+
+            # Record any failure chunk so a stream that errors part-way
+            # through is reported rather than saved as an artefact.
+            stream_errors = []
+
+            def watch_errors(chunks):
+                for chunk in chunks:
+                    if isinstance(chunk, ErrorChunk):
+                        stream_errors.append(str(chunk))
+                    yield chunk
 
             # Check if using vision
             if uploaded_files and use_vision:
@@ -195,7 +192,7 @@ with tab1:
                 # Generate with vision, streaming tokens live
                 with stream_placeholder.container():
                     st.caption(f"Analyzing {len(processed_images)} image(s) and generating…")
-                    st.session_state.current_artefact = st.write_stream(
+                    st.session_state.current_artefact = st.write_stream(watch_errors(
                         stream_artefact_with_vision(
                             project_description,
                             date,
@@ -209,13 +206,13 @@ with tab1:
                             temperature=temperature,
                             retry_config=retry_config
                         )
-                    )
+                    ))
 
             else:
                 # Standard text-only generation, streaming tokens live
                 with stream_placeholder.container():
                     st.caption("Generating your diegetic artefact…")
-                    st.session_state.current_artefact = st.write_stream(
+                    st.session_state.current_artefact = st.write_stream(watch_errors(
                         stream_artefact(
                             project_description,
                             date,
@@ -228,8 +225,10 @@ with tab1:
                             temperature=temperature,
                             retry_config=retry_config
                         )
-                    )
+                    ))
 
+            if stream_errors:
+                st.session_state.current_artefact = stream_errors[-1]
             result = st.session_state.current_artefact
             # Clear the live stream so the styled display section renders once.
             stream_placeholder.empty()

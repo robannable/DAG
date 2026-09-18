@@ -1,10 +1,13 @@
-"""Vision-enhanced API provider functions - Anthropic Claude only"""
-import os
+"""Vision-enhanced API provider functions - Anthropic, or OpenRouter image-capable models"""
 import logging
 from typing import Dict, Any, List, Optional, Iterator
-import requests
-from api.retry import make_streaming_request_with_retry, RetryConfig
-from api.providers import iter_anthropic_stream
+from api.retry import RetryConfig
+from api.providers import (
+    ErrorChunk,
+    auth_headers,
+    resolve_temperature,
+    stream_response,
+)
 
 
 # Static instruction scaffolding for the vision path. Kept as a single
@@ -31,6 +34,13 @@ The <think> section will not be visible to the end user unless they choose to se
 5. Create the diegetic artefact itself (500-750 words) using markdown. Reference specific elements you observed in the visual materials (spaces, annotations, materials, dimensions) so the artefact feels grounded in the actual visual context rather than generic assumptions."""
 
 
+def _vision_intro(images: List[dict], text_prompt: str) -> str:
+    return (
+        f"Please analyze the {len(images)} image(s) shared above and use that "
+        f"visual context together with the project details below.\n\n{text_prompt}"
+    )
+
+
 def prepare_vision_request_anthropic(
     text_prompt: str,
     images: List[dict],
@@ -50,10 +60,6 @@ def prepare_vision_request_anthropic(
     Returns:
         Request data dictionary
     """
-    if temperature is not None:
-        model_config = model_config.copy()
-        model_config["temperature"] = temperature
-
     # Build content array: images first, then the dynamic text prompt
     content = []
 
@@ -67,16 +73,11 @@ def prepare_vision_request_anthropic(
             }
         })
 
-    content.append({
-        "type": "text",
-        "text": f"Please analyze the {len(images)} image(s) shared above and use that "
-                f"visual context together with the project details below.\n\n{text_prompt}"
-    })
+    content.append({"type": "text", "text": _vision_intro(images, text_prompt)})
 
-    return {
+    data = {
         "model": model_config["model"],
         "max_tokens": model_config["max_tokens"],
-        "temperature": model_config["temperature"],
         "stream": True,
         "system": [
             {
@@ -92,6 +93,47 @@ def prepare_vision_request_anthropic(
             }
         ]
     }
+    temp = resolve_temperature(model_config, temperature)
+    if temp is not None:
+        data["temperature"] = temp
+    if model_config.get("thinking"):
+        data["thinking"] = model_config["thinking"]
+    return data
+
+
+def prepare_vision_request_openrouter(
+    text_prompt: str,
+    images: List[dict],
+    model_config: Dict[str, Any],
+    temperature: Optional[float] = None
+) -> Dict[str, Any]:
+    """Prepare an OpenAI-format vision request for OpenRouter.
+
+    Images travel as base64 data URLs in ``image_url`` parts, ahead of the
+    text part.
+    """
+    content = [
+        {
+            "type": "image_url",
+            "image_url": {"url": f"data:{img['media_type']};base64,{img['base64']}"}
+        }
+        for img in images
+    ]
+    content.append({"type": "text", "text": _vision_intro(images, text_prompt)})
+
+    data = {
+        "model": model_config["model"],
+        "max_tokens": model_config["max_tokens"],
+        "stream": True,
+        "messages": [
+            {"role": "system", "content": VISION_SYSTEM_PROMPT},
+            {"role": "user", "content": content}
+        ]
+    }
+    temp = resolve_temperature(model_config, temperature)
+    if temp is not None:
+        data["temperature"] = temp
+    return data
 
 
 def stream_artefact_with_vision(
@@ -108,31 +150,28 @@ def stream_artefact_with_vision(
     retry_config: Optional[RetryConfig] = None
 ) -> Iterator[str]:
     """
-    Vision-enhanced generation (Anthropic only), yielding text chunks live.
+    Vision-enhanced generation, yielding text chunks live.
 
-    Suitable for ``st.write_stream``. On any failure a single
-    "Error:"-prefixed chunk is yielded. Args mirror
+    Works with Anthropic, or with an OpenRouter model whose config has
+    ``supports_vision`` set. Suitable for ``st.write_stream``. On any failure
+    an :class:`ErrorChunk` is yielded. Args mirror
     :func:`generate_artefact_with_vision`.
     """
     provider = model_config.get('provider', '')
 
-    # Check if provider supports vision (Anthropic only)
-    if provider != 'anthropic':
-        yield f"Error: Vision features only supported with Anthropic Claude. Current provider: '{provider}'. Please switch to Anthropic in the sidebar."
+    if provider not in ('anthropic', 'openrouter') or not model_config.get('supports_vision'):
+        yield ErrorChunk(
+            f"Error: Model '{model_config.get('model')}' ({provider}) cannot read images. "
+            "Choose Anthropic, or a vision-capable OpenRouter model, in the sidebar."
+        )
         return
 
-    # Get API key
-    api_key = os.getenv(model_config['api_key_env'])
-    if not api_key:
-        yield f"Error: {model_config['api_key_env']} not found in environment variables. Please add it to your .env file."
+    headers, error = auth_headers(model_config)
+    if error:
+        yield ErrorChunk(f"{error}. Please add it to your .env file.")
         return
 
-    # Prepare headers (Anthropic format)
-    headers = model_config['headers'].copy()
-    headers["x-api-key"] = api_key
-
-    # Log
-    logging.info(f"Using Anthropic Claude vision with {len(images)} image(s)")
+    logging.info(f"Using {provider} vision ({model_config.get('model')}) with {len(images)} image(s)")
 
     # Build the dynamic text prompt (static instructions live in
     # VISION_SYSTEM_PROMPT; this carries only per-request project details).
@@ -149,41 +188,17 @@ Artefact Category: {artefact_type}
 
 Additional creative guidance: {closing_instruction}"""
 
-    # Prepare request for Anthropic
-    data = prepare_vision_request_anthropic(
-        text_prompt, images, model_config, temperature
-    )
+    if provider == 'anthropic':
+        data = prepare_vision_request_anthropic(text_prompt, images, model_config, temperature)
+    else:
+        data = prepare_vision_request_openrouter(text_prompt, images, model_config, temperature)
 
-    # Log request
-    logging.debug(f"Sending vision request to: {model_config['api_endpoint']}")
     logging.debug(f"Request contains {len(images)} images")
 
-    try:
-        # Stream the response (per-chunk timeout) so a long vision completion
-        # doesn't trip a single large read timeout.
-        response = make_streaming_request_with_retry(
-            model_config["api_endpoint"],
-            headers,
-            data,
-            config=retry_config,
-            timeout=120  # max gap between chunks
-        )
-
-        logging.debug(f"Response status code: {response.status_code}")
-
-        if response.status_code != 200:
-            error_message = f"Error: API request failed (HTTP {response.status_code}) - {response.text}"
-            logging.error(error_message)
-            yield error_message
-            return
-
-        yield from iter_anthropic_stream(response)
-        logging.info("Completed vision-enhanced artifact stream")
-
-    except Exception as e:
-        error_message = f"Error generating vision-enhanced artefact: {str(e)}"
-        logging.error(error_message)
-        yield error_message
+    # Stream the response (per-chunk timeout) so a long vision completion
+    # doesn't trip a single large read timeout.
+    yield from stream_response(model_config, headers, data, retry_config, timeout=120)
+    logging.info("Completed vision-enhanced artifact stream")
 
 
 def generate_artefact_with_vision(

@@ -15,10 +15,10 @@ def render_image_upload_section() -> tuple:
     Returns:
         Tuple of (uploaded_files, use_vision)
     """
-    with st.expander("📸 Visual Context (Optional - Requires Anthropic Claude)", expanded=False):
+    with st.expander("📸 Visual Context (Optional - needs a vision-capable model)", expanded=False):
         st.markdown("""
 Upload sketches, diagrams, site photos, or reference images to enrich your artifact generation.
-Claude will analyze these visuals using AI vision and incorporate spatial, material, and contextual insights.
+The model will analyze these visuals using AI vision and incorporate spatial, material, and contextual insights.
 
 **Works best with:**
 - Concept sketches and drawings with annotations
@@ -105,29 +105,28 @@ def render_vision_status_messages(
         Whether vision can be used (provider supports it)
     """
     provider = model_config.get('provider', '')
+    model = model_config.get('model', '')
 
-    # Check if provider supports vision (Anthropic only)
-    vision_supported = provider == 'anthropic'
+    vision_supported = (
+        provider in ('anthropic', 'openrouter') and bool(model_config.get('supports_vision'))
+    )
 
     if uploaded_files and use_vision:
         if not vision_supported:
             st.error(f"""
-⚠️ Vision features are only supported with Anthropic Claude
+⚠️ The selected model can't read images
 
-**Current provider:** {provider}
+**Current model:** {model} ({provider})
 
 **To use vision:**
-- Switch to **Anthropic Claude** in the sidebar
-- Or continue without vision analysis (text-only generation)
-
-**Why Anthropic?** Claude has excellent vision capabilities for analyzing architectural sketches,
-diagrams, annotations, and understanding spatial relationships.
+- Switch to **Anthropic**, or pick an OpenRouter model marked "reads images", in the sidebar
+- Or untick "Use AI vision" to generate from the text alone
             """)
             return False
 
         st.success(f"""
-✅ Vision analysis enabled with Anthropic Claude
-Claude will analyze your images and incorporate visual insights into the artifact.
+✅ Vision analysis enabled with {model}
+The model will analyze your images and incorporate visual insights into the artifact.
             """)
 
     return vision_supported
